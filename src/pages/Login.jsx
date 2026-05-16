@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 function Login() {
 
@@ -7,31 +8,54 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+  e.preventDefault();
 
-    if (!storedUser) {
-      alert("No account found. Please sign up first.");
-      return;
+  try {
+
+    const res = await API.post("/auth/login", {
+      email,
+      password,
+    });
+
+    console.log(res.data);
+
+    localStorage.setItem("token", res.data.token);
+
+    localStorage.setItem(
+      "role",
+      res.data.user.role
+    );
+
+    localStorage.setItem(
+      "isAuthenticated",
+      "true"
+    );
+
+    alert("Login Successful");
+
+    if (res.data.user.role === "author") {
+      navigate("/author");
     }
 
-    if (
-      email === storedUser.email &&
-      password === storedUser.password
-    ) {
-      localStorage.setItem("role", storedUser.role);
-      localStorage.setItem("isAuthenticated", "true");
-
-      if (storedUser.role === "author") navigate("/author");
-      if (storedUser.role === "reviewer") navigate("/reviewer");
-      if (storedUser.role === "admin") navigate("/admin");
-
-    } else {
-      alert("Invalid credentials");
+    else if (res.data.user.role === "reviewer") {
+      navigate("/reviewer");
     }
-  };
+
+    else if (res.data.user.role === "admin") {
+      navigate("/admin");
+    }
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      err.response?.data?.message || "Login Failed"
+    );
+  }
+};
 
   return (
     <div

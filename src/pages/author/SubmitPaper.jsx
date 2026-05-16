@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { JournalContext } from "../../context/JournalContext";
 import AuthorLayout from "../../layouts/AuthorLayout";
+import API from "../../services/api";
 
 function SubmitPaper() {
   const { addSubmission } = useContext(JournalContext);
@@ -10,6 +11,7 @@ function SubmitPaper() {
     abstract: "",
     authorName: "",
   });
+  const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -18,9 +20,35 @@ function SubmitPaper() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addSubmission(formData);
+ const handleSubmit = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    const data = new FormData();
+
+    data.append("title", formData.title);
+    data.append("abstract", formData.abstract);
+    data.append("authorName", formData.authorName);
+
+    data.append("file", file);
+
+    const token = localStorage.getItem("token");
+
+    const res = await API.post(
+      "/papers/submit",
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log(res.data);
+
     alert("Paper submitted successfully!");
 
     setFormData({
@@ -28,7 +56,19 @@ function SubmitPaper() {
       abstract: "",
       authorName: "",
     });
-  };
+
+    setFile(null);
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      err.response?.data?.message ||
+      "Paper upload failed"
+    );
+  }
+};
 
   return (
     <AuthorLayout>
@@ -67,6 +107,16 @@ function SubmitPaper() {
             required
           />
         </div>
+        <div style={inputGroup}>
+  <label>Upload PDF</label>
+
+  <input
+    type="file"
+    accept=".pdf"
+    onChange={(e) => setFile(e.target.files[0])}
+    required
+  />
+</div>
 
         <button type="submit" style={submitBtn}>
           Submit Paper

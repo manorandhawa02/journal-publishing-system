@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 function Signup() {
 
@@ -11,22 +12,36 @@ function Signup() {
   });
 
   const navigate = useNavigate();
-
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value
+  });
+};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
 
-    localStorage.setItem("user", JSON.stringify(formData));
+  e.preventDefault();
+
+  try {
+
+    const res = await API.post("/auth/register", formData);
+
+    console.log(res.data);
 
     alert("Account Created Successfully!");
+
     navigate("/login");
-  };
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      err.response?.data?.message || "Signup Failed"
+    );
+  }
+};
 
   return (
     <div
