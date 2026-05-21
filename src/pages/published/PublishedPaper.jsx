@@ -1,0 +1,166 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import ReviewerLayout from "../../layouts/ReviewerLayout";
+
+function PublishedPapers() {
+  const [papers, setPapers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  useEffect(() => {
+    fetchPublished();
+  }, []);
+
+  const fetchPublished = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/published"
+      );
+      setPapers(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ================= FILTER LOGIC =================
+  const filteredPapers = papers.filter((p) => {
+    return (
+      p.title
+        .toLowerCase()
+        .includes(search.toLowerCase()) &&
+      (statusFilter === "" ||
+        p.status === statusFilter)
+    );
+  });
+
+  return (
+    <ReviewerLayout>
+      <div style={containerStyle}>
+        <h1 style={titleStyle}>
+          📚 Published Journals
+        </h1>
+
+        {/* ================= SEARCH ================= */}
+        <input
+          type="text"
+          placeholder="Search papers by title..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          style={searchStyle}
+        />
+
+        {/* ================= FILTER ================= */}
+        <select
+          value={statusFilter}
+          onChange={(e) =>
+            setStatusFilter(e.target.value)
+          }
+          style={selectStyle}
+        >
+          <option value="">All</option>
+          <option value="Published">
+            Published
+          </option>
+        </select>
+
+        {/* ================= CONTENT ================= */}
+        {filteredPapers.length === 0 ? (
+          <p>No published papers found.</p>
+        ) : (
+          <div style={gridStyle}>
+            {filteredPapers.map((p) => (
+              <div key={p._id} style={cardStyle}>
+                <h3>{p.title}</h3>
+
+                <p style={metaStyle}>
+                  <b>Volume:</b> {p.volume} |{" "}
+                  <b>Issue:</b> {p.issue}
+                </p>
+
+                <p style={metaStyle}>
+                  <b>DOI:</b> {p.doi}
+                </p>
+
+                <p style={abstractStyle}>
+                  {p.abstract?.substring(0, 120)}
+                  ...
+                </p>
+
+                <a
+                  href={p.fileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={btnStyle}
+                >
+                  📄 Open Paper
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </ReviewerLayout>
+  );
+}
+
+/* ================= STYLES ================= */
+
+const containerStyle = {
+  padding: "20px",
+};
+
+const titleStyle = {
+  fontSize: "28px",
+  marginBottom: "20px",
+};
+
+const searchStyle = {
+  padding: "10px",
+  width: "100%",
+  marginBottom: "15px",
+  borderRadius: "8px",
+  border: "1px solid #ddd",
+};
+
+const selectStyle = {
+  padding: "8px",
+  marginBottom: "20px",
+};
+
+const gridStyle = {
+  display: "grid",
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(300px, 1fr))",
+  gap: "20px",
+};
+
+const cardStyle = {
+  background: "white",
+  padding: "20px",
+  borderRadius: "12px",
+  boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+};
+
+const metaStyle = {
+  fontSize: "13px",
+  color: "#555",
+};
+
+const abstractStyle = {
+  fontSize: "13px",
+  marginTop: "10px",
+};
+
+const btnStyle = {
+  display: "inline-block",
+  marginTop: "10px",
+  padding: "8px 12px",
+  background: "#2563eb",
+  color: "white",
+  borderRadius: "6px",
+  textDecoration: "none",
+};
+
+export default PublishedPapers;

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { JournalContext } from "../../context/JournalContext";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
@@ -6,22 +6,42 @@ import ReviewerLayout from "../../layouts/ReviewerLayout";
 import {
   makeDecision,
   submitReview,
+  submitRevision,
 } from "../../services/paperService";
+
+
 
 function PaperDetails() {
   const { id } = useParams();
+
   const { submissions } = useContext(JournalContext);
 
   const paper = submissions.find((p) => p._id === id);
 
+  // ================= REVIEW STATES =================
   const [comments, setComments] = useState("");
-  const [recommendation, setRecommendation] = useState("Accept");
+  const [recommendation, setRecommendation] =
+    useState("Accept");
 
-  if (!paper) return <div>Loading...</div>;
-    const handleDecision = async (decision) => {
+  // ================= REVISION STATES =================
+  const [revisionComment, setRevisionComment] =
+    useState("");
+
+  const [revisionFile, setRevisionFile] =
+    useState(null);
+
+  // ================= LOADING =================
+  if (!paper) {
+    return <div>Loading...</div>;
+  }
+
+  // ================= EDITOR DECISION =================
+  const handleDecision = async (decision) => {
     try {
       await makeDecision(paper._id, decision);
-      alert("Decision updated");
+
+      alert(`Paper marked as ${decision}`);
+
       window.location.reload();
     } catch (err) {
       console.log(err);
@@ -29,6 +49,7 @@ function PaperDetails() {
     }
   };
 
+  // ================= SUBMIT REVIEW =================
   const handleSubmitReview = async () => {
     try {
       await submitReview(paper._id, {
@@ -36,75 +57,130 @@ function PaperDetails() {
         recommendation,
       });
 
-      alert("Review submitted");
+      alert("Review submitted successfully");
+
       window.location.reload();
     } catch (err) {
       console.log(err);
       alert("Error submitting review");
     }
   };
-    return (
+
+  // ================= SUBMIT REVISION =================
+  const handleRevisionSubmit = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("file", revisionFile);
+      formData.append("comment", revisionComment);
+
+      await submitRevision(paper._id, formData);
+
+      alert("Revision submitted successfully");
+
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+      alert("Error submitting revision");
+    }
+  };
+
+  return (
     <ReviewerLayout>
       <div style={containerStyle}>
+        {/* ================= TITLE ================= */}
         <h1>{paper.title}</h1>
 
+        {/* ================= STATUS ================= */}
         <p style={statusStyle}>
           Status: {paper.status}
         </p>
 
+        {/* ================= ABSTRACT ================= */}
         <div style={section}>
           <h3>Abstract</h3>
+
           <p>{paper.abstract}</p>
         </div>
 
+        {/* ================= FILE ================= */}
         <div style={section}>
           <h3>Download Paper</h3>
-          <a href={paper.fileUrl} target="_blank">
-            Open File
-          </a>
+
+          <PDFViewer fileUrl={paper.fileUrl} />
         </div>
-                <div style={section}>
+
+        {/* ================= TIMELINE ================= */}
+        <div style={section}>
           <h3>Timeline</h3>
 
-          {paper.timeline?.map((t, i) => (
-            <p key={i}>
-              • {t.action} (
-              {new Date(t.date).toLocaleString()})
-            </p>
-          ))}
+          {paper.timeline?.length > 0 ? (
+            paper.timeline.map((t, i) => (
+              <p key={i}>
+                • {t.action} (
+                {new Date(t.date).toLocaleString()})
+              </p>
+            ))
+          ) : (
+            <p>No timeline available</p>
+          )}
         </div>
-                <div style={section}>
+
+        {/* ================= EDITOR ACTIONS ================= */}
+        <div style={section}>
           <h3>Editorial Actions</h3>
 
-          <button onClick={() => handleDecision("Accept")} style={btnAccept}>
+          <button
+            onClick={() => handleDecision("Accept")}
+            style={btnAccept}
+          >
             Accept
           </button>
 
-          <button onClick={() => handleDecision("Minor Revision")} style={btnRev}>
+          <button
+            onClick={() =>
+              handleDecision("Minor Revision")
+            }
+            style={btnRevision}
+          >
             Minor Revision
           </button>
 
-          <button onClick={() => handleDecision("Major Revision")} style={btnRev}>
+          <button
+            onClick={() =>
+              handleDecision("Major Revision")
+            }
+            style={btnRevision}
+          >
             Major Revision
           </button>
 
-          <button onClick={() => handleDecision("Reject")} style={btnReject}>
+          <button
+            onClick={() => handleDecision("Reject")}
+            style={btnReject}
+          >
             Reject
           </button>
         </div>
-                <div style={section}>
+
+        {/* ================= REVIEW FORM ================= */}
+        <div style={section}>
           <h3>Submit Review</h3>
 
           <textarea
             placeholder="Write comments to author..."
             value={comments}
-            onChange={(e) => setComments(e.target.value)}
+            onChange={(e) =>
+              setComments(e.target.value)
+            }
             style={textarea}
           />
 
           <select
             value={recommendation}
-            onChange={(e) => setRecommendation(e.target.value)}
+            onChange={(e) =>
+              setRecommendation(e.target.value)
+            }
             style={select}
           >
             <option>Accept</option>
@@ -113,14 +189,48 @@ function PaperDetails() {
             <option>Reject</option>
           </select>
 
-          <button onClick={handleSubmitReview} style={btnAccept}>
+          <button
+            onClick={handleSubmitReview}
+            style={btnAccept}
+          >
             Submit Review
+          </button>
+        </div>
+
+        {/* ================= REVISION FORM ================= */}
+        <div style={section}>
+          <h3>Submit Revision</h3>
+
+          <textarea
+            placeholder="Explain changes made..."
+            value={revisionComment}
+            onChange={(e) =>
+              setRevisionComment(e.target.value)
+            }
+            style={textarea}
+          />
+
+          <input
+            type="file"
+            onChange={(e) =>
+              setRevisionFile(e.target.files[0])
+            }
+          />
+
+          <button
+            onClick={handleRevisionSubmit}
+            style={btnAccept}
+          >
+            Submit Revision
           </button>
         </div>
       </div>
     </ReviewerLayout>
   );
 }
+
+/* ================= STYLES ================= */
+
 const containerStyle = {
   background: "white",
   padding: "30px",
@@ -128,23 +238,25 @@ const containerStyle = {
 };
 
 const section = {
-  marginTop: "20px",
+  marginTop: "25px",
 };
 
 const statusStyle = {
-  color: "#555",
   fontWeight: "bold",
+  color: "#555",
 };
 
 const textarea = {
   width: "100%",
-  height: "100px",
+  height: "120px",
   marginTop: "10px",
+  padding: "10px",
 };
 
 const select = {
   marginTop: "10px",
   display: "block",
+  padding: "8px",
 };
 
 const btnAccept = {
@@ -152,22 +264,31 @@ const btnAccept = {
   marginRight: "10px",
   background: "green",
   color: "white",
-  padding: "8px",
+  border: "none",
+  padding: "10px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
 };
 
-const btnRev = {
+const btnRevision = {
   marginTop: "10px",
   marginRight: "10px",
   background: "orange",
   color: "white",
-  padding: "8px",
+  border: "none",
+  padding: "10px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
 };
 
 const btnReject = {
   marginTop: "10px",
   background: "red",
   color: "white",
-  padding: "8px",
+  border: "none",
+  padding: "10px 14px",
+  borderRadius: "6px",
+  cursor: "pointer",
 };
 
 export default PaperDetails;

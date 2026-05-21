@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import { pdfjs } from "react-pdf";
 // Pages
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import TopNavbar from "./components/TopNavbar";
 import AuthorDashboard from "./pages/author/Dashboard";
-import ReviewerDashboard from "./pages/reviewer/Dashboard";
-import AdminDashboard from "./pages/admin/Dashboard";
+import ReviewerDashboard from "./pages/reviewer/ReviewerDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import Login from "./pages/Login";
 import SubmitPaper from "./pages/author/SubmitPaper";
 import AIAnalysis from "./pages/AIAnalysis";
@@ -15,12 +15,14 @@ import ReviewPaper from "./pages/reviewer/ReviewPaper";
 import Comparison from "./pages/admin/Comparison";
 import AdminSubmissions from "./pages/admin/Submissions";
 import MyPapers from "./pages/reviewer/MyPapers";
+import PublishedPapers from "./pages/published/PublishedPapers";
 
 
 
-
-
+pdfjs.GlobalWorkerOptions.workerSrc =
+  `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -31,6 +33,8 @@ function App() {
 
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
+
+        <Route path="/published" element={<PublishedPapers />} />
 
         {/* Login Route */}
         <Route path="/login" element={<Login />} />

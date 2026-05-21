@@ -1,26 +1,91 @@
 export default function StatusBadge({ status }) {
-  const getColor = () => {
+  // ================= STATUS COLORS =================
+  const getStyles = () => {
     switch (status) {
+      case "Draft":
+        return {
+          background: "#6b7280",
+          label: "Draft",
+        };
+
       case "Submitted":
-        return "bg-blue-500";
+        return {
+          background: "#2563eb",
+          label: "Submitted",
+        };
+
+      case "Initial Screening":
+        return {
+          background: "#0ea5e9",
+          label: "Initial Screening",
+        };
+
       case "Under Review":
-        return "bg-yellow-500";
-      case "Accepted":
-        return "bg-green-600";
-      case "Rejected":
-        return "bg-red-600";
+        return {
+          background: "#f59e0b",
+          label: "Under Review",
+        };
+
       case "Minor Revision":
-        return "bg-purple-500";
+        return {
+          background: "#8b5cf6",
+          label: "Minor Revision",
+        };
+
       case "Major Revision":
-        return "bg-orange-500";
+        return {
+          background: "#ea580c",
+          label: "Major Revision",
+        };
+
+      case "Accepted":
+        return {
+          background: "#16a34a",
+          label: "Accepted",
+        };
+
+      case "Rejected":
+        return {
+          background: "#dc2626",
+          label: "Rejected",
+        };
+
+      case "Copyediting":
+        return {
+          background: "#0891b2",
+          label: "Copyediting",
+        };
+
+      case "Published":
+        return {
+          background: "#15803d",
+          label: "Published",
+        };
+
       default:
-        return "bg-gray-400";
+        return {
+          background: "#6b7280",
+          label: status || "Unknown",
+        };
     }
   };
 
+  const styles = getStyles();
+
   return (
-    <span className={`${getColor()} text-white px-3 py-1 rounded-full text-sm`}>
-      {status}
+    <span
+      style={{
+        background: styles.background,
+        color: "white",
+        padding: "6px 14px",
+        borderRadius: "999px",
+        fontSize: "13px",
+        fontWeight: "600",
+        display: "inline-block",
+        letterSpacing: "0.3px",
+      }}
+    >
+      {styles.label}
     </span>
   );
 }

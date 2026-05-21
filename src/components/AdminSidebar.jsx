@@ -14,6 +14,9 @@ function AdminSidebar() {
   return (
     <div style={sidebarStyle}>
       <h4 style={logoStyle}>Admin Panel</h4>
+      <li>
+  <Link to="/published">📚 Published Journals</Link>
+</li>
 
       <div style={{ marginTop: "40px" }}>
         {menuItems.map((item, index) => (

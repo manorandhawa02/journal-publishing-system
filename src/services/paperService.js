@@ -16,3 +16,7 @@ export const submitReview = (id, data) =>
 // ================= ASSIGN REVIEWER =================
 export const assignReviewer = (id, reviewerId) =>
   axios.post(`${API}/reviews/${id}/assign`, { reviewerId });
+
+// ================= Subit Revision =================
+export const submitRevision = (id, data) =>
+  axios.put(`${API}/papers/${id}/revision`, data);
