@@ -1,11 +1,10 @@
 import { useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { JournalContext } from "../../context/JournalContext";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
+import { submitReview } from "../../services/paperService";
 
 function ReviewPaper() {
   const { id } = useParams();
-  const { updateStatus } = useContext(JournalContext);
 
   const [review, setReview] = useState({
     score: "",
@@ -13,11 +12,8 @@ function ReviewPaper() {
     recommendation: "",
   });
 
-  const handleChange = (e) => {
-    setReview({ ...review, [e.target.name]: e.target.value });
-  };
+const handleSubmit = async (e) => {
 
-  const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
@@ -31,12 +27,12 @@ function ReviewPaper() {
 
     alert("Review Submitted Successfully");
 
-  } catch (error) {
+  } catch (err) {
 
-    console.log(error);
+    console.log(err);
 
     alert(
-      error.response?.data?.message ||
+      err.response?.data?.message ||
       "Review submission failed"
     );
   }

@@ -30,11 +30,12 @@ export const getPaperById = async (id) => {
 
 // ================= ASSIGN REVIEWER =================
 export const assignReviewer = async (
-  id,
+  paperId,
   reviewerId
 ) => {
+
   const res = await API.post(
-    `/review/${id}/assign`,
+    `/review/${paperId}/assign`,
     { reviewerId }
   );
 
@@ -43,12 +44,23 @@ export const assignReviewer = async (
 
 // ================= SUBMIT REVIEW =================
 export const submitReview = async (
-  id,
-  data
+  paperId,
+  reviewData
 ) => {
+
   const res = await API.post(
-    `/review/${id}/submit`,
-    data
+    `/review/${paperId}/submit`,
+    reviewData
+  );
+
+  return res.data;
+};
+
+// ================= GET ASSIGNED PAPERS =================
+export const getAssignedPapers = async () => {
+
+  const res = await API.get(
+    "/review/assigned"
   );
 
   return res.data;
@@ -56,6 +68,7 @@ export const submitReview = async (
 
 // ================= ACCEPT PAPER =================
 export const acceptPaper = async (id) => {
+
   const res = await API.put(
     `/paper/${id}/accept`
   );
@@ -68,18 +81,10 @@ export const rejectPaper = async (
   id,
   reason
 ) => {
+
   const res = await API.put(
     `/paper/${id}/reject`,
     { reason }
-  );
-
-  return res.data;
-};
-
-// ================= PUBLISH PAPER =================
-export const publishPaper = async (id) => {
-  const res = await API.post(
-    `/published/publish/${id}`
   );
 
   return res.data;
