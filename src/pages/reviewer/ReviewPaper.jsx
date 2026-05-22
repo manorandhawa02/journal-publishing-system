@@ -17,11 +17,30 @@ function ReviewPaper() {
     setReview({ ...review, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateStatus(Number(id), review.recommendation);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+
+    await submitReview(id, {
+      commentsToAuthor: review.comments,
+      confidentialComments: "",
+      recommendation: review.recommendation,
+      rating: review.score,
+    });
+
     alert("Review Submitted Successfully");
-  };
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Review submission failed"
+    );
+  }
+};
 
   return (
     <ReviewerLayout>

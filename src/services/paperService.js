@@ -1,9 +1,6 @@
 import API from "./api";
-import axios from "axios";
 
-const API = "http://localhost:5000/api"; // change if needed
-
-// submit paper
+// ================= SUBMIT PAPER =================
 export const submitPaper = async (formData) => {
   const res = await API.post(
     "/paper/submit",
@@ -13,52 +10,77 @@ export const submitPaper = async (formData) => {
   return res.data;
 };
 
-// get all papers
+// ================= GET ALL PAPERS =================
 export const getAllPapers = async () => {
   const res = await API.get("/paper");
   return res.data;
 };
 
-// get my papers
+// ================= GET MY PAPERS =================
 export const getMyPapers = async () => {
   const res = await API.get("/paper/my");
   return res.data;
 };
 
-// get single paper
+// ================= GET SINGLE PAPER =================
 export const getPaperById = async (id) => {
   const res = await API.get(`/paper/${id}`);
   return res.data;
 };
 
-// decision
-export const makeDecision = async (
+// ================= ASSIGN REVIEWER =================
+export const assignReviewer = async (
   id,
-  decision
+  reviewerId
 ) => {
-  const res = await API.put(
-    `/admin/decision/${id}`,
-    { decision }
+  const res = await API.post(
+    `/review/${id}/assign`,
+    { reviewerId }
   );
 
   return res.data;
 };
 
-// ================= GET PAPER =================
-export const getPaper = (id) => axios.get(`${API}/papers/${id}`);
-
-// ================= FINAL DECISION =================
-export const makeDecision = (id, decision) =>
-  axios.put(`${API}/decision/${id}/final`, { decision });
-
 // ================= SUBMIT REVIEW =================
-export const submitReview = (id, data) =>
-  axios.post(`${API}/reviews/${id}/submit`, data);
+export const submitReview = async (
+  id,
+  data
+) => {
+  const res = await API.post(
+    `/review/${id}/submit`,
+    data
+  );
 
-// ================= ASSIGN REVIEWER =================
-export const assignReviewer = (id, reviewerId) =>
-  axios.post(`${API}/reviews/${id}/assign`, { reviewerId });
+  return res.data;
+};
 
-// ================= Submit Revision =================
-export const submitRevision = (id, data) =>
-  axios.put(`${API}/papers/${id}/revision`, data);
+// ================= ACCEPT PAPER =================
+export const acceptPaper = async (id) => {
+  const res = await API.put(
+    `/paper/${id}/accept`
+  );
+
+  return res.data;
+};
+
+// ================= REJECT PAPER =================
+export const rejectPaper = async (
+  id,
+  reason
+) => {
+  const res = await API.put(
+    `/paper/${id}/reject`,
+    { reason }
+  );
+
+  return res.data;
+};
+
+// ================= PUBLISH PAPER =================
+export const publishPaper = async (id) => {
+  const res = await API.post(
+    `/published/publish/${id}`
+  );
+
+  return res.data;
+};

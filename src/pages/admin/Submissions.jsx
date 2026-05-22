@@ -1,9 +1,15 @@
 import { useContext } from "react";
 import { JournalContext } from "../../context/JournalContext";
 import AdminLayout from "../../layouts/AdminLayout";
+import {
+  assignReviewer,
+  acceptPaper,
+  rejectPaper,
+  publishPaper
+} from "../../services/paperService";
 
 function Submissions() {
-  const { submissions, assignReviewer } = useContext(JournalContext);
+const { submissions } = useContext(JournalContext);
 
   return (
     <AdminLayout>
@@ -25,7 +31,7 @@ function Submissions() {
             </thead>
             <tbody>
               {submissions.map((paper) => (
-                <tr key={paper.id}>
+                <tr key={paper._id}>
                   <td>{paper.title}</td>
                   <td>{paper.authorName}</td>
                   <td>{paper.status}</td>
@@ -33,9 +39,29 @@ function Submissions() {
                   <td>
                     <button
                       style={assignBtn}
-                      onClick={() =>
-                        assignReviewer(paper.id, "Dr. Smith")
-                      }
+                      onClick={async () => {
+
+  try {
+
+    const reviewerId =
+      prompt("Enter Reviewer MongoDB ID");
+
+    if (!reviewerId) return;
+
+    await assignReviewer(
+      paper._id,
+      reviewerId
+    );
+
+    alert("Reviewer Assigned");
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert("Assignment failed");
+  }
+}}
                     >
                       Assign Reviewer
                     </button>

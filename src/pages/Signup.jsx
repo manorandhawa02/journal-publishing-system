@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
-import { signupUser } from "../services/authService";
+// import { signupUser } from "../services/authService";
 
 function Signup() {
 
@@ -12,25 +12,7 @@ function Signup() {
     role: "author"
   });
 
-  const handleSignup = async (e) => {
-  e.preventDefault();
-
-  try {
-    const data = await signupUser(formData);
-
-    alert("Signup successful");
-
-    console.log(data);
-
-  } catch (err) {
-    console.log(err);
-
-    alert(
-      err.response?.data?.message ||
-      "Signup failed"
-    );
-  }
-};
+ 
 
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -40,13 +22,16 @@ function Signup() {
   });
 };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
 
   e.preventDefault();
 
   try {
 
-    const res = await API.post("/auth/register", formData);
+    const res = await API.post(
+      "/auth/register",
+      formData
+    );
 
     console.log(res.data);
 
@@ -58,9 +43,24 @@ function Signup() {
 
     console.log(err);
 
-    alert(
-      err.response?.data?.message || "Signup Failed"
-    );
+    if (
+      err.response?.data?.message ===
+      "User already exists"
+    ) {
+
+      alert(
+        "Account already exists. Please login."
+      );
+
+      navigate("/login");
+
+    } else {
+
+      alert(
+        err.response?.data?.message ||
+        "Signup Failed"
+      );
+    }
   }
 };
 
