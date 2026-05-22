@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
 
-function PublishedPapers() {
+function PublishedPaper() {
   const [papers, setPapers] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -163,4 +163,4 @@ const btnStyle = {
   textDecoration: "none",
 };
 
-export default PublishedPapers;
+export default PublishedPaper;

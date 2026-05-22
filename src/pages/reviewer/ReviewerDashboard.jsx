@@ -1,10 +1,21 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { JournalContext } from "../../context/JournalContext";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
 
 function ReviewerDashboard() {
   const { submissions, user } = useContext(JournalContext);
+  useEffect(() => {
+  fetchPapers();
+}, []);
 
+const fetchPapers = async () => {
+  try {
+    const data = await getAllPapers();
+    setPapers(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
   // 🔥 REAL ASSIGNED PAPERS (NO HARD CODE)
   const assigned = submissions.filter((paper) =>
     paper.assignedReviewers?.includes(user._id)

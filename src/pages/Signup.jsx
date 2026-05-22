@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { signupUser } from "../services/authService";
 
 function Signup() {
 
@@ -10,6 +11,26 @@ function Signup() {
     password: "",
     role: "author"
   });
+
+  const handleSignup = async (e) => {
+  e.preventDefault();
+
+  try {
+    const data = await signupUser(formData);
+
+    alert("Signup successful");
+
+    console.log(data);
+
+  } catch (err) {
+    console.log(err);
+
+    alert(
+      err.response?.data?.message ||
+      "Signup failed"
+    );
+  }
+};
 
   const navigate = useNavigate();
   const handleChange = (e) => {

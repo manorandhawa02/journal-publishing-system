@@ -5,7 +5,7 @@ import { pdfjs } from "react-pdf";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import TopNavbar from "./components/TopNavbar";
-import AuthorDashboard from "./pages/author/Dashboard";
+import Dashboard from "./pages/author/Dashboard";
 import ReviewerDashboard from "./pages/reviewer/ReviewerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Login from "./pages/Login";
@@ -13,9 +13,9 @@ import SubmitPaper from "./pages/author/SubmitPaper";
 import AIAnalysis from "./pages/AIAnalysis";
 import ReviewPaper from "./pages/reviewer/ReviewPaper";
 import Comparison from "./pages/admin/Comparison";
-import AdminSubmissions from "./pages/admin/Submissions";
+import Submissions from "./pages/admin/Submissions";
 import MyPapers from "./pages/reviewer/MyPapers";
-import PublishedPapers from "./pages/published/PublishedPapers";
+import PublishedPaper from "./pages/published/PublishedPaper";
 
 
 
@@ -34,7 +34,7 @@ function App() {
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/published" element={<PublishedPapers />} />
+        <Route path="/published" element={<PublishedPaper />} />
 
         {/* Login Route */}
         <Route path="/login" element={<Login />} />
@@ -44,7 +44,7 @@ function App() {
           path="/author"
           element={
             <ProtectedRoute allowedRole="author">
-              <AuthorDashboard />
+              <Dashboard />
             </ProtectedRoute>
           }
         />
@@ -107,7 +107,7 @@ function App() {
   path="/admin/submissions"
   element={
     <ProtectedRoute allowedRole="admin">
-      <AdminSubmissions />
+      <Submissions />
     </ProtectedRoute>
   }
 />
