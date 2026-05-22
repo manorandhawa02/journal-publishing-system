@@ -1,6 +1,6 @@
 import AuthorLayout from "../../layouts/AuthorLayout";
 
-function Dashboard() {
+function AuthorDashboard() {
   return (
     <AuthorLayout>
       <h2 style={titleStyle}>Author Dashboard</h2>
@@ -43,4 +43,4 @@ const cardStyle = {
   boxShadow: "0 8px 20px rgba(0,0,0,0.05)"
 };
 
-export default Dashboard;
+export default AuthorDashboard;

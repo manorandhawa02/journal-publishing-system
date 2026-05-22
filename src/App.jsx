@@ -5,7 +5,7 @@ import { pdfjs } from "react-pdf";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import TopNavbar from "./components/TopNavbar";
-import Dashboard from "./pages/author/Dashboard";
+import AuthorDashboard from "./pages/author/AuthorDashboard";
 import ReviewerDashboard from "./pages/reviewer/ReviewerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Login from "./pages/Login";
@@ -44,7 +44,7 @@ function App() {
           path="/author"
           element={
             <ProtectedRoute allowedRole="author">
-              <Dashboard />
+              <AuthorDashboard />
             </ProtectedRoute>
           }
         />
