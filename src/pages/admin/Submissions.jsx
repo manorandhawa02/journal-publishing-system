@@ -63,16 +63,16 @@ function Submissions() {
     }
   };
   const handlePublish = async (paperId) => {
-  try {
-    const res = await publishPaper(paperId);
-    console.log("PUBLISH SUCCESS:", res);
-    alert("Paper published successfully");
-    fetchPapers();
-  } catch (err) {
-    console.log("PUBLISH ERROR FULL:", err.response);
-    alert(err.response?.data?.message || "Publish failed");
-  }
-};
+    try {
+      const res = await publishPaper(paperId);
+      console.log("PUBLISH SUCCESS:", res);
+      alert("Paper published successfully");
+      fetchPapers();
+    } catch (err) {
+      console.log("PUBLISH ERROR FULL:", err.response);
+      alert(err.response?.data?.message || "Publish failed");
+    }
+  };
 
   return (
     <AdminLayout>
@@ -97,12 +97,16 @@ function Submissions() {
               {submissions.map((paper) => (
                 <tr key={paper._id}>
                   <td style={tdStyle}>{paper.title}</td>
-                  <td style={tdStyle}>{paper.submittedBy?.name || "Unknown"}</td>
+                  <td style={tdStyle}>
+                    {paper.submittedBy?.name || "Unknown"}
+                  </td>
                   <td style={tdStyle}>{paper.status}</td>
                   <td style={tdStyle}>
                     {paper.assignedReviewers?.length > 0
-  ? paper.assignedReviewers.map((r) => r.name).join(", ")
-  : "Not Assigned"}
+                      ? paper.assignedReviewers
+                          .map((r) => r.name || r)
+                          .join(", ")
+                      : "Not Assigned"}
                   </td>
 
                   <td style={tdStyle}>
@@ -114,15 +118,28 @@ function Submissions() {
                           if (!reviewerId) return;
 
                           try {
-                            await API.post(`/review/${paper._id}/assign`, {
-                              reviewerId: reviewerId,
-                            });
+                            const res = await API.post(
+                              `/review/${paper._id}/assign`,
+                              {
+                                reviewerId,
+                              },
+                            );
 
-                            alert("Reviewer Assigned");
+                            console.log("ASSIGN SUCCESS:", res.data);
+
+                            alert(
+                              res.data.message ||
+                                "Reviewer Assigned Successfully",
+                            );
+
+                            fetchPapers();
                           } catch (err) {
-                            console.log(err);
+                            console.log("ASSIGN ERROR:", err.response);
 
-                            alert("Assignment failed");
+                            alert(
+                              err.response?.data?.message ||
+                                "Assignment Failed",
+                            );
                           }
                         }}
                       >
@@ -149,17 +166,17 @@ function Submissions() {
                         Reject
                       </button>
                       {paper.status === "Accepted" && (
-  <button
-    style={{
-      ...assignBtn,
-      marginLeft: "10px",
-      backgroundColor: "green",
-    }}
-    onClick={() => handlePublish(paper._id)}
-  >
-    Publish
-  </button>
-)}
+                        <button
+                          style={{
+                            ...assignBtn,
+                            marginLeft: "10px",
+                            backgroundColor: "green",
+                          }}
+                          onClick={() => handlePublish(paper._id)}
+                        >
+                          Publish
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
