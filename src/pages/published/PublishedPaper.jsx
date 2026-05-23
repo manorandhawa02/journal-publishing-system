@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ReviewerLayout from "../../layouts/ReviewerLayout";
+import AdminLayout from "../../layouts/AdminLayout";
 
 function PublishedPaper() {
   const [papers, setPapers] = useState([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  // const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
     fetchPublished();
@@ -13,9 +13,16 @@ function PublishedPaper() {
 
   const fetchPublished = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/published"
-      );
+      const token = localStorage.getItem("token");
+
+const res = await axios.get(
+  "http://localhost:5000/api/published",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
       setPapers(res.data);
     } catch (err) {
       console.log(err);
@@ -24,13 +31,12 @@ function PublishedPaper() {
 
   // ================= FILTER LOGIC =================
   const filteredPapers = papers.filter((p) => {
-    return (
+    return 
       p.title
         .toLowerCase()
-        .includes(search.toLowerCase()) &&
-      (statusFilter === "" ||
-        p.status === statusFilter)
-    );
+        .includes(search.toLowerCase())
+      
+    
   });
 
   return (
@@ -51,8 +57,8 @@ function PublishedPaper() {
           style={searchStyle}
         />
 
-        {/* ================= FILTER ================= */}
-        <select
+        {/* ================= FILTER =================
+       /* <select
           value={statusFilter}
           onChange={(e) =>
             setStatusFilter(e.target.value)
@@ -63,7 +69,7 @@ function PublishedPaper() {
           <option value="Published">
             Published
           </option>
-        </select>
+        </select>  */}
 
         {/* ================= CONTENT ================= */}
         {filteredPapers.length === 0 ? (

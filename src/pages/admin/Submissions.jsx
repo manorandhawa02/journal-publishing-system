@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import API from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 import {
+  publishPaper,
   getAllPapers,
   assignReviewer,
   acceptPaper,
@@ -9,64 +11,68 @@ import {
 
 function Submissions() {
   const [submissions, setSubmissions] = useState([]);
+  const [reviewers, setReviewers] = useState([]);
+
   useEffect(() => {
     fetchPapers();
+    fetchReviewers();
   }, []);
 
   const fetchPapers = async () => {
     try {
-      const data = await getAllPapers();
+      const res = await API.get("/paper");
 
-      setSubmissions(data);
+      setSubmissions(res.data);
     } catch (err) {
       console.log(err);
-
-      alert("Failed to load papers");
     }
   };
-  const handleAssignReviewer = async (paperId) => {
+
+  const fetchReviewers = async () => {
     try {
-      const reviewerId = prompt("Enter Reviewer User ID");
+      const res = await API.get("/admin/reviewers");
 
-      if (!reviewerId) return;
-
-      await assignReviewer(paperId, reviewerId);
-
-      alert("Reviewer assigned");
-
-      fetchPapers();
+      setReviewers(res.data);
     } catch (err) {
       console.log(err);
-
-      alert("Assignment failed");
     }
   };
+
   const handleAccept = async (paperId) => {
     try {
       await acceptPaper(paperId);
-
       alert("Paper accepted");
-
       fetchPapers();
     } catch (err) {
       console.log(err);
-
       alert("Accept failed");
     }
   };
+
   const handleReject = async (paperId) => {
     try {
       const reason = prompt("Enter rejection reason");
+      if (!reason) return;
 
       await rejectPaper(paperId, reason);
-
       alert("Paper rejected");
+      fetchPapers();
+    } catch (err) {
+      console.log(err);
+      alert("Reject failed");
+    }
+  };
+  const handlePublish = async (paperId) => {
+    try {
+      await publishPaper(paperId);
+
+      alert("Paper published successfully");
 
       fetchPapers();
     } catch (err) {
       console.log(err);
 
-      alert("Reject failed");
+      alert(err.response?.data?.message || "Publish failed");
     }
   };
 
@@ -81,60 +87,78 @@ function Submissions() {
           <table style={tableStyle}>
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Status</th>
-                <th>Reviewer</th>
-                <th>Assign</th>
+                <th style={thStyle}>Title</th>
+                <th style={thStyle}>Author</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Reviewer</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {submissions.map((paper) => (
                 <tr key={paper._id}>
-                  <td>{paper.title}</td>
-                  <td>{paper.author?.name || "Unknown"}</td>
-                  <td>{paper.status}</td>
-                  <td>{paper.reviewer || "Not Assigned"}</td>
-                  <td>
-                    <button
-                      style={assignBtn}
-                      onClick={async () => {
-                        try {
-                          const reviewerId = prompt(
-                            "Enter Reviewer MongoDB ID",
-                          );
+                  <td style={tdStyle}>{paper.title}</td>
+                  <td style={tdStyle}>{paper.author?.name || "Unknown"}</td>
+                  <td style={tdStyle}>{paper.status}</td>
+                  <td style={tdStyle}>
+                    {paper.reviewer?.name || "Not Assigned"}
+                  </td>
+
+                  <td style={tdStyle}>
+                    <div style={btnGroup}>
+                      <select
+                        onChange={async (e) => {
+                          const reviewerId = e.target.value;
 
                           if (!reviewerId) return;
 
-                          await assignReviewer(paper._id, reviewerId);
+                          try {
+                            await API.post(`/review/${paper._id}/assign`, {
+                              reviewerId: reviewerId,
+                            });
 
-                          alert("Reviewer Assigned");
-                        } catch (error) {
-                          console.log(error);
+                            alert("Reviewer Assigned");
+                          } catch (err) {
+                            console.log(err);
 
-                          alert("Assignment failed");
-                        }
-                      }}
-                    >
-                      Assign Reviewer
-                    </button>
-                    <button
-                      style={assignBtn}
-                      onClick={() => handleAccept(paper._id)}
-                    >
-                      Accept
-                    </button>
+                            alert("Assignment failed");
+                          }
+                        }}
+                      >
+                        <option value="">Select Reviewer</option>
 
-                    <button
-                      style={{
-                        ...assignBtn,
-                        marginLeft: "10px",
-                        backgroundColor: "crimson",
-                      }}
-                      onClick={() => handleReject(paper._id)}
-                    >
-                      Reject
-                    </button>
+                        {reviewers.map((reviewer) => (
+                          <option key={reviewer._id} value={reviewer._id}>
+                            {reviewer.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        style={assignBtn}
+                        onClick={() => handleAccept(paper._id)}
+                      >
+                        Accept
+                      </button>
+
+                      <button
+                        style={rejectBtn}
+                        onClick={() => handleReject(paper._id)}
+                      >
+                        Reject
+                      </button>
+                      <button
+                        style={{
+                          ...assignBtn,
+                          marginLeft: "10px",
+                          backgroundColor: "green",
+                        }}
+                        onClick={() => handlePublish(paper._id)}
+                      >
+                        Publish
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -145,6 +169,8 @@ function Submissions() {
     </AdminLayout>
   );
 }
+
+/* ================= STYLES ================= */
 
 const titleStyle = {
   marginBottom: "30px",
@@ -157,11 +183,29 @@ const tableContainer = {
   padding: "30px",
   borderRadius: "14px",
   boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+  overflowX: "auto",
 };
 
 const tableStyle = {
   width: "100%",
   borderCollapse: "collapse",
+  textAlign: "left",
+};
+
+const thStyle = {
+  padding: "12px",
+  borderBottom: "1px solid #ddd",
+};
+
+const tdStyle = {
+  padding: "12px",
+  borderBottom: "1px solid #f2f2f2",
+};
+
+const btnGroup = {
+  display: "flex",
+  gap: "10px",
+  flexWrap: "wrap",
 };
 
 const assignBtn = {
@@ -171,6 +215,11 @@ const assignBtn = {
   border: "none",
   borderRadius: "6px",
   cursor: "pointer",
+};
+
+const rejectBtn = {
+  ...assignBtn,
+  backgroundColor: "crimson",
 };
 
 export default Submissions;
