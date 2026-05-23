@@ -63,18 +63,16 @@ function Submissions() {
     }
   };
   const handlePublish = async (paperId) => {
-    try {
-      await publishPaper(paperId);
-
-      alert("Paper published successfully");
-
-      fetchPapers();
-    } catch (err) {
-      console.log(err);
-
-      alert(err.response?.data?.message || "Publish failed");
-    }
-  };
+  try {
+    const res = await publishPaper(paperId);
+    console.log("PUBLISH SUCCESS:", res);
+    alert("Paper published successfully");
+    fetchPapers();
+  } catch (err) {
+    console.log("PUBLISH ERROR FULL:", err.response);
+    alert(err.response?.data?.message || "Publish failed");
+  }
+};
 
   return (
     <AdminLayout>
@@ -99,10 +97,12 @@ function Submissions() {
               {submissions.map((paper) => (
                 <tr key={paper._id}>
                   <td style={tdStyle}>{paper.title}</td>
-                  <td style={tdStyle}>{paper.author?.name || "Unknown"}</td>
+                  <td style={tdStyle}>{paper.submittedBy?.name || "Unknown"}</td>
                   <td style={tdStyle}>{paper.status}</td>
                   <td style={tdStyle}>
-                    {paper.reviewer?.name || "Not Assigned"}
+                    {paper.assignedReviewers?.length > 0
+  ? paper.assignedReviewers.map((r) => r.name).join(", ")
+  : "Not Assigned"}
                   </td>
 
                   <td style={tdStyle}>
@@ -148,16 +148,18 @@ function Submissions() {
                       >
                         Reject
                       </button>
-                      <button
-                        style={{
-                          ...assignBtn,
-                          marginLeft: "10px",
-                          backgroundColor: "green",
-                        }}
-                        onClick={() => handlePublish(paper._id)}
-                      >
-                        Publish
-                      </button>
+                      {paper.status === "Accepted" && (
+  <button
+    style={{
+      ...assignBtn,
+      marginLeft: "10px",
+      backgroundColor: "green",
+    }}
+    onClick={() => handlePublish(paper._id)}
+  >
+    Publish
+  </button>
+)}
                     </div>
                   </td>
                 </tr>

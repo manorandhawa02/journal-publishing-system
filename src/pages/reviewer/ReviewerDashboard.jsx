@@ -1,36 +1,33 @@
-import { useContext, useEffect } from "react";
-import { JournalContext } from "../../context/JournalContext";
+import { useEffect, useState } from "react";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
+import { getAssignedPapers } from "../../services/reviewService";
 
 function ReviewerDashboard() {
-  const { submissions, user } = useContext(JournalContext);
+  const [papers, setPapers] = useState([]);
+
   useEffect(() => {
-  fetchPapers();
-}, []);
+    fetchAssignedPapers();
+  }, []);
 
-const fetchPapers = async () => {
-  try {
-    const data = await getAllPapers();
-    setPapers(data);
-  } catch (err) {
-    console.log(err);
-  }
-};
-  // 🔥 REAL ASSIGNED PAPERS (NO HARD CODE)
-  const assigned = submissions.filter((paper) =>
-    paper.assignedReviewers?.includes(user._id)
+  const fetchAssignedPapers = async () => {
+    try {
+      const data = await getAssignedPapers();
+      setPapers(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const pending = papers.filter(
+    (p) => p.status === "Under Review" || p.status === "Submitted"
   );
 
-  const pending = assigned.filter(
-    (paper) => paper.status === "Under Review" || paper.status === "Submitted"
-  );
-
-  const completed = assigned.filter(
-    (paper) =>
-      paper.status === "Accepted" ||
-      paper.status === "Rejected" ||
-      paper.status === "Minor Revision" ||
-      paper.status === "Major Revision"
+  const completed = papers.filter(
+    (p) =>
+      p.status === "Accepted" ||
+      p.status === "Rejected" ||
+      p.status === "Minor Revision" ||
+      p.status === "Major Revision"
   );
 
   return (
@@ -39,38 +36,42 @@ const fetchPapers = async () => {
 
       {/* STATS */}
       <div style={gridStyle}>
-        <StatCard title="Assigned Papers" value={assigned.length} />
+        <StatCard title="Assigned Papers" value={papers.length} />
         <StatCard title="Pending Reviews" value={pending.length} />
         <StatCard title="Completed Reviews" value={completed.length} />
       </div>
 
-      {/* ASSIGNED PAPERS LIST */}
+      {/* ASSIGNED PAPERS */}
       <div style={{ marginTop: "40px" }}>
         <h3>Assigned Papers</h3>
 
-        {assigned.map((paper) => (
-          <div key={paper._id} style={cardStyle}>
-            <h4>{paper.title}</h4>
-            <p style={{ fontSize: "13px", color: "#666" }}>
-              Status: {paper.status}
-            </p>
+        {papers.length === 0 ? (
+          <p>No papers assigned yet.</p>
+        ) : (
+          papers.map((paper) => (
+            <div key={paper._id} style={cardStyle}>
+              <h4>{paper.title}</h4>
+              <p style={{ fontSize: "13px", color: "#666" }}>
+                Status: {paper.status}
+              </p>
 
-            <button
-              style={btnStyle}
-              onClick={() => {
-                window.location.href = `/reviewer/paper/${paper._id}`;
-              }}
-            >
-              Review Paper
-            </button>
-          </div>
-        ))}
+              <button
+                style={btnStyle}
+                onClick={() =>
+                  (window.location.href = `/reviewer/paper/${paper._id}`)
+                }
+              >
+                Review Paper
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </ReviewerLayout>
   );
 }
 
-/* ================= UI COMPONENT ================= */
+/* ================= COMPONENT ================= */
 function StatCard({ title, value }) {
   return (
     <div style={cardStyle}>
@@ -81,7 +82,6 @@ function StatCard({ title, value }) {
 }
 
 /* ================= STYLES ================= */
-
 const titleStyle = {
   marginBottom: "30px",
   fontSize: "32px",

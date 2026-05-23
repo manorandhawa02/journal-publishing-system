@@ -30,6 +30,7 @@ function SubmitPaper() {
 
     data.append("title", formData.title);
     data.append("abstract", formData.abstract);
+    data.append("keywords", formData.keywords);
     data.append("authorName", formData.authorName);
 
     data.append("file", file);
@@ -96,6 +97,17 @@ function SubmitPaper() {
             required
           ></textarea>
         </div>
+        <div style={inputGroup}>
+  <label>Keywords</label>
+
+  <input
+    type="text"
+    name="keywords"
+    value={formData.keywords}
+    onChange={handleChange}
+    placeholder="AI, ML, Blockchain"
+  />
+</div>
 
         <div style={inputGroup}>
           <label>Author Name</label>

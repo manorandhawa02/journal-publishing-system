@@ -147,3 +147,20 @@ export const getReviewers = async () => {
 
   return res.data;
 };
+
+
+
+export const getAdminStats = async () => {
+  const res = await API.get("/admin/stats");
+  return res.data;
+};
+
+export const getAuthorStats = async () => {
+  const res = await API.get("/admin/author-stats");
+  return res.data;
+};
+
+export const getAssignedPapers = async () => {
+  const res = await API.get("/review/assigned");
+  return res.data;
+};

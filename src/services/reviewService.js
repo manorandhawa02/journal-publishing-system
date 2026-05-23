@@ -1,22 +1,17 @@
-import API from "./api";
+import axios from "axios";
 
-// submit review
-export const submitReview = async (
-  paperId,
-  reviewData
-) => {
-  const res = await API.post(
-    `/review/${paperId}`,
-    reviewData
-  );
+const API_URL = "http://localhost:5000/api/review";
 
-  return res.data;
-};
+export const getAssignedPapers = async () => {
+  const token = localStorage.getItem("token");
 
-// get reviews
-export const getReviews = async (paperId) => {
-  const res = await API.get(
-    `/review/${paperId}`
+  const res = await axios.get(
+    `${API_URL}/assigned`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return res.data;
