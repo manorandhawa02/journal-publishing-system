@@ -1,55 +1,120 @@
-import { useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ReviewerLayout from "../../layouts/ReviewerLayout";
 import { submitReview } from "../../services/paperService";
+import API from "../../services/api";
 
 function ReviewPaper() {
   const { id } = useParams();
 
+  // ================= PAPER STATE =================
+  const [paper, setPaper] = useState(null);
+
+  // ================= REVIEW FORM =================
   const [review, setReview] = useState({
     score: "",
     comments: "",
     recommendation: "",
   });
 
-const handleSubmit = async (e) => {
+  // ================= FETCH PAPER =================
+  useEffect(() => {
+    fetchPaper();
+  }, [id]);
 
-  e.preventDefault();
+  const fetchPaper = async () => {
+    try {
+      const res = await API.get(`/paper/${id}`);
 
-  try {
+      console.log("PAPER DATA:", res.data);
 
-    await submitReview(id, {
-      commentsToAuthor: review.comments,
-      confidentialComments: "",
-      recommendation: review.recommendation,
-      rating: review.score,
+      setPaper(res.data);
+
+    } catch (err) {
+      console.log("PAPER LOAD ERROR:", err);
+    }
+  };
+
+  // ================= HANDLE CHANGE =================
+  const handleChange = (e) => {
+    setReview({
+      ...review,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    alert("Review Submitted Successfully");
+  // ================= SUBMIT REVIEW =================
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  } catch (err) {
+    try {
+      await submitReview(id, {
+        commentsToAuthor: review.comments,
+        confidentialComments: "",
+        recommendation: review.recommendation,
+        rating: review.score,
+      });
 
-    console.log(err);
+      alert("Review Submitted Successfully");
 
-    alert(
-      err.response?.data?.message ||
-      "Review submission failed"
-    );
-  }
-};
+    } catch (err) {
+      console.log(err);
+
+      alert(
+        err.response?.data?.message ||
+        "Review submission failed"
+      );
+    }
+  };
 
   return (
     <ReviewerLayout>
+
       <h2 style={titleStyle}>Review Paper</h2>
 
+      {/* ================= PAPER DETAILS ================= */}
+      {paper && (
+        <div style={paperBox}>
+          <h3>{paper.title}</h3>
+
+          <p>
+            <b>Author:</b>{" "}
+            {paper.submittedBy?.name || "Unknown"}
+          </p>
+
+          <p>
+            <b>Status:</b> {paper.status}
+          </p>
+
+          {/* PDF VIEWER */}
+          {paper.fileUrl && (
+            <iframe
+              src={`http://localhost:5000/${paper.fileUrl}`}
+              title="Paper PDF"
+              width="100%"
+              height="600px"
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                marginTop: "20px",
+              }}
+            />
+          )}
+        </div>
+      )}
+
+      {/* ================= REVIEW FORM ================= */}
       <form onSubmit={handleSubmit} style={formStyle}>
+
         <div style={inputGroup}>
           <label>Score (1–10)</label>
+
           <input
             type="number"
             name="score"
             min="1"
             max="10"
+            value={review.score}
             onChange={handleChange}
             required
           />
@@ -57,9 +122,11 @@ const handleSubmit = async (e) => {
 
         <div style={inputGroup}>
           <label>Comments</label>
+
           <textarea
             rows="4"
             name="comments"
+            value={review.comments}
             onChange={handleChange}
             required
           />
@@ -67,31 +134,53 @@ const handleSubmit = async (e) => {
 
         <div style={inputGroup}>
           <label>Recommendation</label>
+
           <select
             name="recommendation"
+            value={review.recommendation}
             onChange={handleChange}
             required
           >
             <option value="">Select</option>
-            <option value="Accepted">Accept</option>
-            <option value="Minor Revision">Minor Revision</option>
-            <option value="Major Revision">Major Revision</option>
-            <option value="Rejected">Reject</option>
+
+            <option value="Accept">Accept</option>
+
+            <option value="Minor Revision">
+              Minor Revision
+            </option>
+
+            <option value="Major Revision">
+              Major Revision
+            </option>
+
+            <option value="Reject">Reject</option>
           </select>
         </div>
 
         <button type="submit" style={submitBtn}>
           Submit Review
         </button>
+
       </form>
+
     </ReviewerLayout>
   );
 }
 
+/* ================= STYLES ================= */
+
 const titleStyle = {
   marginBottom: "30px",
   fontSize: "30px",
-  fontWeight: "700"
+  fontWeight: "700",
+};
+
+const paperBox = {
+  backgroundColor: "white",
+  padding: "25px",
+  borderRadius: "14px",
+  marginBottom: "30px",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
 };
 
 const formStyle = {
@@ -99,13 +188,13 @@ const formStyle = {
   padding: "40px",
   borderRadius: "14px",
   boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-  maxWidth: "600px"
+  maxWidth: "700px",
 };
 
 const inputGroup = {
   display: "flex",
   flexDirection: "column",
-  marginBottom: "20px"
+  marginBottom: "20px",
 };
 
 const submitBtn = {
@@ -114,7 +203,7 @@ const submitBtn = {
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 export default ReviewPaper;

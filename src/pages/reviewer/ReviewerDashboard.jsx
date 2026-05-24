@@ -39,34 +39,7 @@ function ReviewerDashboard() {
         <StatCard title="Assigned Papers" value={papers.length} />
         <StatCard title="Pending Reviews" value={pending.length} />
         <StatCard title="Completed Reviews" value={completed.length} />
-      </div>
-
-      {/* ASSIGNED PAPERS */}
-      <div style={{ marginTop: "40px" }}>
-        <h3>Assigned Papers</h3>
-
-        {papers.length === 0 ? (
-          <p>No papers assigned yet.</p>
-        ) : (
-          papers.map((paper) => (
-            <div key={paper._id} style={cardStyle}>
-              <h4>{paper.title}</h4>
-              <p style={{ fontSize: "13px", color: "#666" }}>
-                Status: {paper.status}
-              </p>
-
-              <button
-                style={btnStyle}
-                onClick={() =>
-                  (window.location.href = `/reviewer/review/${paper._id}`)
-                }
-              >
-                Review Paper
-              </button>
-            </div>
-          ))
-        )}
-      </div>
+     </div>
     </ReviewerLayout>
   );
 }

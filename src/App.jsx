@@ -16,6 +16,7 @@ import Comparison from "./pages/admin/Comparison";
 import Submissions from "./pages/admin/Submissions";
 import MyPapers from "./pages/reviewer/MyPapers";
 import PublishedPaper from "./pages/published/PublishedPaper";
+import AssignedPapers from "./pages/reviewer/AssignedPapers";
 
 
 
@@ -117,6 +118,14 @@ function App() {
   element={
     <ProtectedRoute allowedRole="reviewer">
       <MyPapers />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/reviewer/papers"
+  element={
+    <ProtectedRoute allowedRole="reviewer">
+      <AssignedPapers />
     </ProtectedRoute>
   }
 />

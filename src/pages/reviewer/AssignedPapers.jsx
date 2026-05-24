@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import ReviewerLayout from "../../layouts/ReviewerLayout";
-
 import { getAssignedPapers } from "../../services/reviewService";
 
-function MyPapers() {
-
+function AssignedPapers() {
   const [papers, setPapers] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,45 +12,27 @@ function MyPapers() {
   }, []);
 
   const fetchAssignedPapers = async () => {
-
     try {
-
       const data = await getAssignedPapers();
-
-      console.log("ASSIGNED PAPERS:", data);
-
       setPapers(data);
-
     } catch (err) {
-
-      console.log("ASSIGNED PAPERS ERROR:", err);
+      console.log(err);
     }
   };
 
   return (
     <ReviewerLayout>
-
-      <h2 style={titleStyle}>
-        Assigned Papers
-      </h2>
+      <h2 style={titleStyle}>Assigned Papers</h2>
 
       {papers.length === 0 ? (
-
-        <div style={emptyBox}>
-          No assigned papers found.
-        </div>
-
+        <p>No assigned papers.</p>
       ) : (
-
         papers.map((paper) => (
-
-          <div key={paper._id} style={paperCard}>
-
+          <div key={paper._id} style={cardStyle}>
             <h3>{paper.title}</h3>
 
             <p>
-              <b>Author:</b>{" "}
-              {paper.submittedBy?.name || "Unknown"}
+              <b>Author:</b> {paper.submittedBy?.name}
             </p>
 
             <p>
@@ -62,52 +40,42 @@ function MyPapers() {
             </p>
 
             <button
-              style={reviewBtn}
+              style={btnStyle}
               onClick={() =>
                 navigate(`/reviewer/review/${paper._id}`)
               }
             >
               Review Paper
             </button>
-
           </div>
         ))
       )}
-
     </ReviewerLayout>
   );
 }
 
-/* ================= STYLES ================= */
-
 const titleStyle = {
+  marginBottom: "30px",
   fontSize: "32px",
   fontWeight: "700",
-  marginBottom: "30px",
 };
 
-const paperCard = {
+const cardStyle = {
   backgroundColor: "white",
-  padding: "25px",
+  padding: "20px",
   borderRadius: "12px",
-  marginBottom: "20px",
   boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+  marginBottom: "20px",
 };
 
-const reviewBtn = {
-  marginTop: "15px",
+const btnStyle = {
+  marginTop: "10px",
   padding: "10px 16px",
+  border: "none",
   backgroundColor: "#0B3C5D",
   color: "white",
-  border: "none",
   borderRadius: "6px",
   cursor: "pointer",
 };
 
-const emptyBox = {
-  backgroundColor: "white",
-  padding: "30px",
-  borderRadius: "10px",
-};
-
-export default MyPapers;
+export default AssignedPapers;
