@@ -58,7 +58,7 @@ function ReviewerDashboard() {
               <button
                 style={btnStyle}
                 onClick={() =>
-                  (window.location.href = `/reviewer/paper/${paper._id}`)
+                  (window.location.href = `/reviewer/review/${paper._id}`)
                 }
               >
                 Review Paper
