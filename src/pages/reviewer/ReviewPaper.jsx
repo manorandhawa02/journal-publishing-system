@@ -29,7 +29,6 @@ function ReviewPaper() {
       console.log("PAPER DATA:", res.data);
 
       setPaper(res.data);
-
     } catch (err) {
       console.log("PAPER LOAD ERROR:", err);
     }
@@ -56,20 +55,15 @@ function ReviewPaper() {
       });
 
       alert("Review Submitted Successfully");
-
     } catch (err) {
       console.log(err);
 
-      alert(
-        err.response?.data?.message ||
-        "Review submission failed"
-      );
+      alert(err.response?.data?.message || "Review submission failed");
     }
   };
 
   return (
     <ReviewerLayout>
-
       <h2 style={titleStyle}>Review Paper</h2>
 
       {/* ================= PAPER DETAILS ================= */}
@@ -78,8 +72,7 @@ function ReviewPaper() {
           <h3>{paper.title}</h3>
 
           <p>
-            <b>Author:</b>{" "}
-            {paper.submittedBy?.name || "Unknown"}
+            <b>Author:</b> {paper.submittedBy?.name || "Unknown"}
           </p>
 
           <p>
@@ -87,33 +80,48 @@ function ReviewPaper() {
           </p>
 
           {/* PDF VIEWER */}
-          {paper.fileUrl && (
-            <iframe
-              src={`http://localhost:5000/${paper.fileUrl}`}
-              title="Paper PDF"
-              width="100%"
-              height="600px"
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                marginTop: "20px",
-              }}
-            />
-          )}
+          {/* PDF VIEWER */}
+          <div style={{ marginTop: "20px" }}>
+            {paper.fileUrl ? (
+              <>
+                <iframe
+                  src={paper.fileUrl}
+                  title="Paper PDF"
+                  width="100%"
+                  height="600px"
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "10px",
+                    backgroundColor: "#fff",
+                  }}
+                />
+
+                <a
+                  href={paper.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={pdfBtn}
+                >
+                  Open Paper PDF
+                </a>
+              </>
+            ) : (
+              <p style={{ color: "red" }}>PDF not available</p>
+            )}
+          </div>
         </div>
       )}
 
       {/* ================= REVIEW FORM ================= */}
       <form onSubmit={handleSubmit} style={formStyle}>
-
         <div style={inputGroup}>
-          <label>Score (1–10)</label>
+          <label>Score (1–5)</label>
 
           <input
             type="number"
             name="score"
             min="1"
-            max="10"
+            max="5"
             value={review.score}
             onChange={handleChange}
             required
@@ -145,13 +153,9 @@ function ReviewPaper() {
 
             <option value="Accept">Accept</option>
 
-            <option value="Minor Revision">
-              Minor Revision
-            </option>
+            <option value="Minor Revision">Minor Revision</option>
 
-            <option value="Major Revision">
-              Major Revision
-            </option>
+            <option value="Major Revision">Major Revision</option>
 
             <option value="Reject">Reject</option>
           </select>
@@ -160,9 +164,7 @@ function ReviewPaper() {
         <button type="submit" style={submitBtn}>
           Submit Review
         </button>
-
       </form>
-
     </ReviewerLayout>
   );
 }
@@ -181,6 +183,17 @@ const paperBox = {
   borderRadius: "14px",
   marginBottom: "30px",
   boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+};
+
+const pdfBtn = {
+  display: "inline-block",
+  marginTop: "20px",
+  padding: "12px 18px",
+  backgroundColor: "#0B3C5D",
+  color: "white",
+  borderRadius: "8px",
+  textDecoration: "none",
+  fontWeight: "600",
 };
 
 const formStyle = {
