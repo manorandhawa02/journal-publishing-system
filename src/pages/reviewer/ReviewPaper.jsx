@@ -86,7 +86,7 @@ function ReviewPaper() {
             {paper.fileUrl ? (
               <>
                 <iframe
-                  src={paper.fileUrl}
+                  src={`${paper.fileUrl}#toolbar=0`}
                   title="Paper PDF"
                   width="100%"
                   height="600px"
