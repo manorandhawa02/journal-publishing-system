@@ -27,6 +27,7 @@ function ReviewPaper() {
       const res = await API.get(`/paper/${id}`);
 
       console.log("PAPER DATA:", res.data);
+      console.log("FILE URL FRONTEND:", res.data.fileUrl);
 
       setPaper(res.data);
     } catch (err) {
@@ -99,7 +100,7 @@ function ReviewPaper() {
                 <a
                   href={paper.fileUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   style={pdfBtn}
                 >
                   Open Paper PDF

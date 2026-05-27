@@ -36,7 +36,7 @@ function ReviewerDashboard() {
 
       {/* STATS */}
       <div style={gridStyle}>
-        <StatCard title="Assigned Papers" value={papers.length} />
+        <StatCard title="Assigned Papers" value={pending.length} />
         <StatCard title="Pending Reviews" value={pending.length} />
         <StatCard title="Completed Reviews" value={completed.length} />
      </div>
