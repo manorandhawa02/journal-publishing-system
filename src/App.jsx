@@ -35,8 +35,11 @@ function App() {
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/published" element={<PublishedPaper />} />
-
+        {/* <Route path="/published" element={<PublishedPaper />} /> */}
+        <Route
+  path="/admin/published"
+  element={<PublishedPaper />}
+/>
         {/* Login Route */}
         <Route path="/login" element={<Login />} />
 

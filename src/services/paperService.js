@@ -151,7 +151,17 @@ export const getReviewers = async () => {
 
 
 export const getAdminStats = async () => {
-  const res = await API.get("/admin/stats");
+  const token = localStorage.getItem("token");
+
+  const res = await axios.get(
+    "http://localhost:5000/api/admin/stats",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
   return res.data;
 };
 

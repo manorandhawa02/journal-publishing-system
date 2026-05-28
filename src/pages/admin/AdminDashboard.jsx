@@ -21,9 +21,19 @@ function AdminDashboard() {
   const loadStats = async () => {
     try {
       const data = await getAdminStats();
-      setStats(data);
+      console.log(data.total, data.submitted, data.underReview);
+      setStats({
+        total: data.total || 0,
+        submitted: data.submitted || 0,
+        underReview: data.underReview || 0,
+        minorRevision: data.minorRevision || 0,
+        majorRevision: data.majorRevision || 0,
+        accepted: data.accepted || 0,
+        rejected: data.rejected || 0,
+        inProgress: data.inProgress || 0,
+      });
     } catch (err) {
-      console.log(err);
+      console.log("ADMIN STATS ERROR:", err.response?.data || err.message);
     }
   };
 

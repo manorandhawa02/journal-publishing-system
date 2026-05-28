@@ -40,7 +40,7 @@ const res = await axios.get(
   });
 
   return (
-    <ReviewerLayout>
+    <AdminLayout>
       <div style={containerStyle}>
         <h1 style={titleStyle}>
           📚 Published Journals
@@ -107,7 +107,7 @@ const res = await axios.get(
           </div>
         )}
       </div>
-    </ReviewerLayout>
+    </AdminLayout>
   );
 }
 
