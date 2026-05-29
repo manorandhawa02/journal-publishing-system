@@ -2,89 +2,63 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { loginUser } from "../services/authService";
+import { FcGoogle } from "react-icons/fc";
 
 function Login() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const data = await loginUser(formData);
+    try {
+      const data = await loginUser(formData);
 
-    localStorage.setItem(
-      "token",
-      data.token
-    );
+      localStorage.setItem("token", data.token);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(data.user)
-    );
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-    alert("Login successful");
+      alert("Login successful");
+    } catch (err) {
+      console.log(err);
 
-  } catch (err) {
-    console.log(err);
-
-    alert(
-      err.response?.data?.message ||
-      "Login failed"
-    );
-  }
-};
-
- const handleSubmit = async (e) => {
-
-  e.preventDefault();
-
-  try {
-
-    const res = await API.post("/auth/login", {
-      email,
-      password,
-    });
-
-    console.log(res.data);
-
-    localStorage.setItem("token", res.data.token);
-
-    localStorage.setItem(
-      "role",
-      res.data.user.role
-    );
-
-    localStorage.setItem(
-      "isAuthenticated",
-      "true"
-    );
-
-    alert("Login Successful");
-
-    if (res.data.user.role === "author") {
-      navigate("/author");
+      alert(err.response?.data?.message || "Login failed");
     }
+  };
 
-    else if (res.data.user.role === "reviewer") {
-      navigate("/reviewer");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
+
+      console.log(res.data);
+
+      localStorage.setItem("token", res.data.token);
+
+      localStorage.setItem("role", res.data.user.role);
+
+      localStorage.setItem("isAuthenticated", "true");
+
+      alert("Login Successful");
+
+      if (res.data.user.role === "author") {
+        navigate("/author");
+      } else if (res.data.user.role === "reviewer") {
+        navigate("/reviewer");
+      } else if (res.data.user.role === "admin") {
+        navigate("/admin");
+      }
+    } catch (err) {
+      console.log(err);
+
+      alert(err.response?.data?.message || "Login Failed");
     }
-
-    else if (res.data.user.role === "admin") {
-      navigate("/admin");
-    }
-
-  } catch (err) {
-
-    console.log(err);
-
-    alert(
-      err.response?.data?.message || "Login Failed"
-    );
-  }
-};
+  };
 
   return (
     <div
@@ -96,13 +70,12 @@ function Login() {
         style={{
           width: "420px",
           borderRadius: "20px",
-          backdropFilter: "blur(10px)"
+          backdropFilter: "blur(10px)",
         }}
       >
         <h3 className="text-center mb-4">Journal System Login</h3>
 
         <form onSubmit={handleSubmit}>
-
           <div className="mb-3">
             <input
               type="email"
@@ -133,12 +106,63 @@ function Login() {
               padding: "10px",
               borderRadius: "10px",
               border: "none",
-              fontWeight: "600"
+              fontWeight: "600",
             }}
           >
             Login
           </button>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: "20px 0",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                height: "1px",
+                background: "#ddd",
+              }}
+            />
 
+            <span
+              style={{
+                margin: "0 10px",
+                color: "#666",
+                fontSize: "14px",
+              }}
+            >
+              OR
+            </span>
+
+            <div
+              style={{
+                flex: 1,
+                height: "1px",
+                background: "#ddd",
+              }}
+            />
+          </div>
+
+          <button
+            type="button"
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "10px",
+              border: "1px solid #ddd",
+              background: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              fontWeight: "500",
+            }}
+          >
+            <FcGoogle size={22} />
+            Continue with Google
+          </button>
         </form>
       </div>
     </div>

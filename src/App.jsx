@@ -14,7 +14,6 @@ import AIAnalysis from "./pages/AIAnalysis";
 import ReviewPaper from "./pages/reviewer/ReviewPaper";
 import Comparison from "./pages/admin/Comparison";
 import Submissions from "./pages/admin/Submissions";
-import MyPapers from "./pages/reviewer/MyPapers";
 import PublishedPaper from "./pages/published/PublishedPaper";
 import AssignedPapers from "./pages/reviewer/AssignedPapers";
 import PublishIssues from "./pages/admin/PublishIssues";
@@ -23,11 +22,12 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 function App() {
   return (
     <BrowserRouter>
+    <TopNavbar />
       <Routes>
         {/* Home Route */}
         <Route path="/" element={<Home />} />
         {/*TopNavbar*/}
-        <Route path="/" element={<TopNavbar />} />
+        
 
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
@@ -111,14 +111,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/reviewer/papers"
-          element={
-            <ProtectedRoute allowedRole="reviewer">
-              <MyPapers />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/reviewer/papers"
           element={

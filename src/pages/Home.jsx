@@ -61,7 +61,7 @@ function Home() {
             letterSpacing: "-1px",
           }}
         >
-          Global Scientific Journal Platform
+          Scientific Journal Platform
         </h1>
 
         <p
@@ -77,9 +77,15 @@ function Home() {
           transparent, efficient, and ethical academic publishing.
         </p>
 
-        <Link to="/signup">
-          <button style={primaryBtn}>Get Started</button>
-        </Link>
+        <div style={{ display: "flex", gap: "20px" }}>
+          <Link to="/signup">
+            <button style={primaryBtn}>Get Started</button>
+          </Link>
+
+          <Link to="/login">
+            <button style={secondaryBtn}>Login</button>
+          </Link>
+        </div>
       </section>
 
       {/* ABOUT */}
@@ -287,6 +293,16 @@ const primaryBtn = {
   backgroundColor: "white",
   color: "#0B3C5D",
   border: "none",
+  borderRadius: "25px",
+  fontWeight: "600",
+  cursor: "pointer",
+};
+
+  const secondaryBtn = {
+  padding: "12px 30px",
+  backgroundColor: "transparent",
+  color: "white",
+  border: "2px solid white",
   borderRadius: "25px",
   fontWeight: "600",
   cursor: "pointer",

@@ -4,65 +4,44 @@ import API from "../services/api";
 // import { signupUser } from "../services/authService";
 
 function Signup() {
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "author"
+    role: "author",
   });
-
- 
 
   const navigate = useNavigate();
   const handleChange = (e) => {
-  setFormData({
-    ...formData,
-    [e.target.name]: e.target.value
-  });
-};
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  e.preventDefault();
+    try {
+      const res = await API.post("/auth/register", formData);
 
-  try {
+      console.log(res.data);
 
-    const res = await API.post(
-      "/auth/register",
-      formData
-    );
-
-    console.log(res.data);
-
-    alert("Account Created Successfully!");
-
-    navigate("/login");
-
-  } catch (err) {
-
-    console.log(err);
-
-    if (
-      err.response?.data?.message ===
-      "User already exists"
-    ) {
-
-      alert(
-        "Account already exists. Please login."
-      );
+      alert("Account Created Successfully!");
 
       navigate("/login");
+    } catch (err) {
+      console.log(err);
 
-    } else {
+      if (err.response?.data?.message === "User already exists") {
+        alert("Account already exists. Please login.");
 
-      alert(
-        err.response?.data?.message ||
-        "Signup Failed"
-      );
+        navigate("/login");
+      } else {
+        alert(err.response?.data?.message || "Signup Failed");
+      }
     }
-  }
-};
+  };
 
   return (
     <div
@@ -76,7 +55,6 @@ function Signup() {
         <h3 className="text-center mb-4">Create Journal Account</h3>
 
         <form onSubmit={handleSubmit}>
-
           <input
             type="text"
             name="name"
@@ -114,10 +92,27 @@ function Signup() {
             <option value="admin">Admin</option>
           </select>
 
-          <button className="btn btn-dark w-100">
-            Create Account
-          </button>
-
+          <button className="btn btn-dark w-100">Create Account</button>
+          <p
+            style={{
+              textAlign: "center",
+              marginTop: "20px",
+              fontSize: "14px",
+            }}
+          >
+            Already have an account?
+            <span
+              onClick={() => navigate("/login")}
+              style={{
+                color: "#0B3C5D",
+                fontWeight: "600",
+                cursor: "pointer",
+                marginLeft: "5px",
+              }}
+            >
+              Login
+            </span>
+          </p>
         </form>
       </div>
     </div>
