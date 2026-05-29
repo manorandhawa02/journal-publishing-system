@@ -9,6 +9,8 @@ function Signup() {
     email: "",
     password: "",
     role: "author",
+    orcid: "",
+    journalCategory: "Computer Science",
   });
 
   const navigate = useNavigate();
@@ -81,7 +83,38 @@ function Signup() {
             onChange={handleChange}
             required
           />
+          <input
+            type="text"
+            name="orcid"
+            placeholder="ORCID ID (0000-0000-0000-0000)"
+            className="form-control mb-3"
+            onChange={handleChange}
+          />
+          <select
+            name="journalCategory"
+            className="form-select mb-3"
+            onChange={handleChange}
+          >
+            <option value="Computer Science">Computer Science</option>
 
+            <option value="Artificial Intelligence">
+              Artificial Intelligence
+            </option>
+
+            <option value="Software Engineering">Software Engineering</option>
+
+            <option value="Data Science">Data Science</option>
+
+            <option value="Cyber Security">Cyber Security</option>
+
+            <option value="Healthcare">Healthcare</option>
+
+            <option value="Blockchain">Blockchain</option>
+
+            <option value="IoT">IoT</option>
+
+            <option value="Cloud Computing">Cloud Computing</option>
+          </select>
           <select
             name="role"
             className="form-select mb-4"

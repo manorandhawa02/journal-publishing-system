@@ -30,14 +30,9 @@ const res = await axios.get(
   };
 
   // ================= FILTER LOGIC =================
-  const filteredPapers = papers.filter((p) => {
-    return 
-      p.title
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      
-    
-  });
+ const filteredPapers = papers.filter((p) =>
+  p.title?.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <AdminLayout>
