@@ -34,7 +34,7 @@ const res = await axios.get(
     return 
       p.title
         .toLowerCase()
-        .includes(search.toLowerCase())
+        .includes(search.toLowerCase());
       
     
   });

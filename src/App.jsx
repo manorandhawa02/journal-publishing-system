@@ -17,29 +17,23 @@ import Submissions from "./pages/admin/Submissions";
 import MyPapers from "./pages/reviewer/MyPapers";
 import PublishedPaper from "./pages/published/PublishedPaper";
 import AssignedPapers from "./pages/reviewer/AssignedPapers";
+import PublishIssues from "./pages/admin/PublishIssues";
 
-
-
-pdfjs.GlobalWorkerOptions.workerSrc =
-  `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 function App() {
-  
   return (
     <BrowserRouter>
       <Routes>
         {/* Home Route */}
         <Route path="/" element={<Home />} />
         {/*TopNavbar*/}
-        <Route path="/" element={<TopNavbar />}/>
+        <Route path="/" element={<TopNavbar />} />
 
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
 
         {/* <Route path="/published" element={<PublishedPaper />} /> */}
-        <Route
-  path="/admin/published"
-  element={<PublishedPaper />}
-/>
+        <Route path="/admin/published" element={<PublishedPaper />} />
         {/* Login Route */}
         <Route path="/login" element={<Login />} />
 
@@ -72,6 +66,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin/issues" element={<PublishIssues />} />
 
         <Route
           path="/author/submit"
@@ -90,14 +85,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-      <Route
-  path="/reviewer/review/:id"
-  element={
-    <ProtectedRoute allowedRole="reviewer">
-      <ReviewPaper />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/reviewer/review/:id"
+          element={
+            <ProtectedRoute allowedRole="reviewer">
+              <ReviewPaper />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/admin/comparison"
@@ -108,32 +103,30 @@ function App() {
           }
         />
         <Route
-  path="/admin/submissions"
-  element={
-    <ProtectedRoute allowedRole="admin">
-      <Submissions />
-    </ProtectedRoute>
-  }
-/>
+          path="/admin/submissions"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <Submissions />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/reviewer/papers"
-  element={
-    <ProtectedRoute allowedRole="reviewer">
-      <MyPapers />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reviewer/papers"
-  element={
-    <ProtectedRoute allowedRole="reviewer">
-      <AssignedPapers />
-    </ProtectedRoute>
-  }
-/>
-
-
+        <Route
+          path="/reviewer/papers"
+          element={
+            <ProtectedRoute allowedRole="reviewer">
+              <MyPapers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reviewer/papers"
+          element={
+            <ProtectedRoute allowedRole="reviewer">
+              <AssignedPapers />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
