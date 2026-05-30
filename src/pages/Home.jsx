@@ -1,220 +1,369 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Home() {
-  // Fade-in animation observer
+  const [publications, setPublications] = useState([]);
+
+  // ================= FETCH PUBLICATIONS =================
+  const fetchPublications = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/published"
+      );
+
+      console.log("PUBLISHED:", res.data);
+
+      setPublications(res.data);
+
+    } catch (err) {
+
+      console.log("PUBLICATION ERROR:", err);
+
+    }
+  };
+
+  // ================= EFFECT =================
   useEffect(() => {
+
+    fetchPublications();
+
     const sections = document.querySelectorAll(".fade-section");
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
           }
+
         });
       },
-      { threshold: 0.2 },
+      {
+        threshold: 0.2,
+      }
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) =>
+      observer.observe(section)
+    );
 
     return () => observer.disconnect();
-  }, []);
 
-  const publications = [
-    {
-      title: "AI-Based Image Recognition in Healthcare Diagnostics",
-      authors: "Emaan Ajmal, Dr. Ahmed Raza",
-      journal: "Vol. 12, Issue 1 (2026)",
-      doi: "10.1234/gsjp.2026.001",
-      abstract:
-        "This study explores deep learning architectures for medical image classification and their impact on diagnostic accuracy.",
-    },
-    {
-      title: "Blockchain-Free Web3 Architectures for Academic Systems",
-      authors: "Ali Khan, Sara Malik",
-      journal: "Vol. 12, Issue 1 (2026)",
-      doi: "10.1234/gsjp.2026.002",
-      abstract:
-        "A scalable decentralized framework for secure and transparent academic manuscript workflows.",
-    },
-    {
-      title: "Optimized Peer Review Assignment Using Machine Learning",
-      authors: "Dr. Hassan Ali, Fatima Noor",
-      journal: "Vol. 11, Issue 4 (2025)",
-      doi: "10.1234/gsjp.2025.089",
-      abstract:
-        "An intelligent reviewer allocation model that improves review time and fairness.",
-    },
-  ];
+  }, []);
 
   return (
     <div>
-      {/* HERO SECTION */}
+
+      {/* ================= HERO ================= */}
       <section style={heroStyle}>
-        <h1
-          style={{
-            fontSize: "56px",
-            fontWeight: "700",
-            marginBottom: "25px",
-            letterSpacing: "-1px",
-          }}
-        >
+
+        <h1 style={heroTitle}>
           Scientific Journal Platform
         </h1>
 
-        <p
-          style={{
-            maxWidth: "750px",
-            marginBottom: "40px",
-            fontSize: "18px",
-            lineHeight: "1.8",
-            opacity: 0.95,
-          }}
-        >
-          A modern manuscript submission and peer-review system designed for
-          transparent, efficient, and ethical academic publishing.
+        <p style={heroText}>
+          A modern manuscript submission and peer-review
+          system designed for transparent, ethical, and
+          efficient academic publishing workflows.
         </p>
 
-        <div style={{ display: "flex", gap: "20px" }}>
+        <div style={heroBtnContainer}>
+
           <Link to="/signup">
-            <button style={primaryBtn}>Get Started</button>
+            <button style={primaryBtn}>
+              Get Started
+            </button>
           </Link>
 
           <Link to="/login">
-            <button style={secondaryBtn}>Login</button>
+            <button style={secondaryBtn}>
+              Login
+            </button>
           </Link>
+
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section className="fade-section" style={sectionLight}>
-        <h2 style={sectionTitle}>About Our Platform</h2>
+      {/* ================= ABOUT ================= */}
+      <section
+        className="fade-section"
+        style={sectionLight}
+      >
+        <h2 style={sectionTitle}>
+          About Our Platform
+        </h2>
+
         <p style={sectionText}>
-          Our system streamlines manuscript submission, peer review, editorial
-          decisions, and publication workflows. Designed for authors, reviewers,
-          and editors, the platform ensures transparency, efficiency, and
-          academic integrity.
+          Our platform streamlines manuscript submission,
+          reviewer assignment, editorial workflows,
+          publication management, and journal archiving
+          for modern academic publishing.
         </p>
       </section>
 
-      {/* FEATURES */}
-      <section className="fade-section" style={sectionDark}>
-        <h2 style={sectionTitleWhite}>Core Features</h2>
+      {/* ================= FEATURES ================= */}
+      <section
+        className="fade-section"
+        style={sectionDark}
+      >
+        <h2 style={sectionTitleWhite}>
+          Core Features
+        </h2>
 
         <div style={featuresContainer}>
+
           <FeatureCard
             title="Manuscript Submission"
-            text="Authors submit research papers with structured metadata and track review progress."
+            text="Authors submit papers with metadata, DOI support, categories, and publication tracking."
           />
+
           <FeatureCard
             title="Peer Review Workflow"
-            text="Reviewers evaluate submissions with scoring, comments, and recommendations."
+            text="Editors assign reviewers while reviewers submit comments, recommendations, and evaluations."
           />
+
           <FeatureCard
-            title="Editorial Decision System"
-            text="Editors manage assignments, revisions, and final publication decisions."
+            title="Publication Management"
+            text="Accepted papers are published into journal volumes and issues professionally."
           />
+
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="fade-section" style={sectionLight}>
-        <h2 style={sectionTitle}>Platform Statistics</h2>
+      {/* ================= STATS ================= */}
+      <section
+        className="fade-section"
+        style={sectionLight}
+      >
+        <h2 style={sectionTitle}>
+          Platform Statistics
+        </h2>
 
         <div style={statsContainer}>
-          <StatBox target={250} label="Submissions" suffix="+" />
-          <StatBox target={120} label="Active Reviewers" suffix="+" />
-          <StatBox target={85} label="Acceptance Rate" suffix="%" />
-          <StatBox target={30} label="Avg Review Time" suffix=" Days" />
+
+          <StatBox
+            target={250}
+            label="Submissions"
+            suffix="+"
+          />
+
+          <StatBox
+            target={120}
+            label="Active Reviewers"
+            suffix="+"
+          />
+
+          <StatBox
+            target={85}
+            label="Acceptance Rate"
+            suffix="%"
+          />
+
+          <StatBox
+            target={30}
+            label="Avg Review Time"
+            suffix=" Days"
+          />
+
         </div>
       </section>
 
-      {/* LATEST PUBLICATIONS */}
-      <section className="fade-section" style={sectionLight}>
-        <h2 style={sectionTitle}>Latest Publications</h2>
+      {/* ================= LATEST PUBLICATIONS ================= */}
+      <section
+        className="fade-section"
+        style={sectionLight}
+      >
 
-        <div style={publicationContainer}>
-          {publications.map((paper, index) => (
-            <PublicationCard key={index} paper={paper} />
-          ))}
+        <h2 style={sectionTitle}>
+          Latest Publications
+        </h2>
+
+        {publications.length === 0 ? (
+
+          <p
+            style={{
+              marginTop: "40px",
+              fontSize: "18px",
+              color: "#666",
+            }}
+          >
+            No published papers available yet.
+          </p>
+
+        ) : (
+
+          <div style={publicationContainer}>
+
+            {publications.map((paper) => (
+
+              <PublicationCard
+                key={paper._id}
+                paper={paper}
+              />
+
+            ))}
+
+          </div>
+
+        )}
+      </section>
+
+      {/* ================= LATEST ISSUE ================= */}
+      <section
+        className="fade-section"
+        style={latestIssueSection}
+      >
+
+        <h2 style={sectionTitleWhite}>
+          Current Issue
+        </h2>
+
+        <div style={issueCard}>
+
+          <h3>
+            Volume 12 • Issue 1
+          </h3>
+
+          <p style={{ marginTop: "15px" }}>
+            January 2026 Special Issue on
+            Artificial Intelligence &
+            Digital Publishing Systems.
+          </p>
+
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* ================= FOOTER ================= */}
       <footer style={footerStyle}>
-        © 2026 Global Scientific Journal Platform | All Rights Reserved
+        © 2026 Scientific Journal Platform |
+        All Rights Reserved
       </footer>
+
     </div>
   );
 }
 
-/* FEATURE CARD */
+/* ================= FEATURE CARD ================= */
 function FeatureCard({ title, text }) {
+
   return (
-    <div className="feature-card" style={featureCard}>
-      <h4>{title}</h4>
-      <p style={{ fontSize: "14px" }}>{text}</p>
+    <div style={featureCard}>
+
+      <h4 style={{ marginBottom: "15px" }}>
+        {title}
+      </h4>
+
+      <p style={{ fontSize: "14px" }}>
+        {text}
+      </p>
+
     </div>
   );
 }
 
+/* ================= PUBLICATION CARD ================= */
 function PublicationCard({ paper }) {
+
   return (
     <div style={publicationCard}>
-      <h4 style={{ marginBottom: "10px", fontWeight: "600" }}>{paper.title}</h4>
 
-      <p style={metaStyle}>{paper.authors}</p>
+      <h3 style={paperTitle}>
+        {paper.title}
+      </h3>
 
-      <p style={metaStyle}>{paper.journal}</p>
+      <p style={metaStyle}>
+        {paper.authors?.join(", ")}
+      </p>
 
-      <p style={doiStyle}>DOI: {paper.doi}</p>
+      <p style={metaStyle}>
+        Volume {paper.volume} | Issue {paper.issue}
+      </p>
 
-      <p style={abstractStyle}>{paper.abstract}</p>
+      <p style={doiStyle}>
+        DOI: {paper.doi}
+      </p>
 
-      <button style={viewBtn}>View Article</button>
+      <p style={abstractStyle}>
+        {paper.abstract?.substring(0, 180)}...
+      </p>
+
+      <a
+        href={paper.fileUrl}
+        target="_blank"
+        rel="noreferrer"
+        style={viewBtn}
+      >
+        View Article
+      </a>
+
     </div>
   );
 }
 
-/* STAT BOX */
-function StatBox({ target, label, suffix = "" }) {
+/* ================= STAT BOX ================= */
+function StatBox({
+  target,
+  label,
+  suffix = "",
+}) {
+
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+
     let start = 0;
+
     const duration = 2000;
-    const increment = target / (duration / 16);
+
+    const increment =
+      target / (duration / 16);
 
     const counter = setInterval(() => {
+
       start += increment;
+
       if (start >= target) {
+
         setCount(target);
+
         clearInterval(counter);
+
       } else {
+
         setCount(Math.floor(start));
+
       }
+
     }, 16);
 
     return () => clearInterval(counter);
+
   }, [target]);
 
   return (
     <div style={statBox}>
-      <h3 style={{ fontSize: "36px", fontWeight: "700" }}>
+
+      <h3 style={statNumber}>
         {count}
         {suffix}
       </h3>
-      <p style={{ marginTop: "10px", fontSize: "15px" }}>{label}</p>
+
+      <p style={statLabel}>
+        {label}
+      </p>
+
     </div>
   );
 }
 
-/* STYLES */
+/* ================= STYLES ================= */
+
 const heroStyle = {
-  minHeight: "90vh",
-  background: "linear-gradient(135deg, #0B3C5D, #328CC1)",
+  minHeight: "92vh",
+  background:
+    "linear-gradient(135deg, #0B3C5D, #328CC1)",
   color: "white",
   display: "flex",
   flexDirection: "column",
@@ -222,6 +371,26 @@ const heroStyle = {
   alignItems: "center",
   textAlign: "center",
   padding: "40px",
+};
+
+const heroTitle = {
+  fontSize: "60px",
+  fontWeight: "700",
+  marginBottom: "25px",
+  letterSpacing: "-1px",
+};
+
+const heroText = {
+  maxWidth: "800px",
+  fontSize: "18px",
+  lineHeight: "1.9",
+  marginBottom: "40px",
+};
+
+const heroBtnContainer = {
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
 };
 
 const sectionLight = {
@@ -237,104 +406,98 @@ const sectionDark = {
 };
 
 const sectionTitle = {
-  fontSize: "40px",
+  fontSize: "42px",
   marginBottom: "25px",
   fontWeight: "700",
+  color: "#0B3C5D",
 };
 
 const sectionTitleWhite = {
-  fontSize: "40px",
-  marginBottom: "40px",
+  fontSize: "42px",
+  marginBottom: "35px",
   fontWeight: "700",
+  color: "white",
 };
 
 const sectionText = {
-  maxWidth: "800px",
+  maxWidth: "850px",
   margin: "0 auto",
-  fontSize: "16px",
-  lineHeight: "1.8",
+  fontSize: "17px",
+  lineHeight: "1.9",
+  color: "#444",
 };
 
 const featuresContainer = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-  gap: "40px",
-  maxWidth: "1100px",
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(300px, 1fr))",
+  gap: "35px",
+  maxWidth: "1150px",
   margin: "0 auto",
 };
 
 const featureCard = {
   backgroundColor: "white",
   color: "#0B3C5D",
-  padding: "30px",
-  borderRadius: "16px",
-  boxShadow: "0 8px 25px rgba(0,0,0,0.12)",
-  textAlign: "center",
+  padding: "35px",
+  borderRadius: "18px",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.10)",
 };
 
 const statsContainer = {
   display: "flex",
   justifyContent: "center",
-  gap: "40px",
+  gap: "35px",
   flexWrap: "wrap",
-  marginTop: "30px",
+  marginTop: "40px",
 };
 
 const statBox = {
   backgroundColor: "white",
   padding: "40px",
-  borderRadius: "16px",
-  width: "220px",
+  borderRadius: "18px",
+  width: "230px",
   boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
 };
 
-const primaryBtn = {
-  padding: "12px 30px",
-  backgroundColor: "white",
+const statNumber = {
+  fontSize: "40px",
+  fontWeight: "700",
   color: "#0B3C5D",
-  border: "none",
-  borderRadius: "25px",
-  fontWeight: "600",
-  cursor: "pointer",
 };
 
-  const secondaryBtn = {
-  padding: "12px 30px",
-  backgroundColor: "transparent",
-  color: "white",
-  border: "2px solid white",
-  borderRadius: "25px",
-  fontWeight: "600",
-  cursor: "pointer",
+const statLabel = {
+  marginTop: "10px",
+  fontSize: "15px",
 };
 
-const footerStyle = {
-  backgroundColor: "#0B3C5D",
-  color: "white",
-  textAlign: "center",
-  padding: "25px",
-  marginTop: "40px",
-};
 const publicationContainer = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(320px, 1fr))",
   gap: "30px",
-  maxWidth: "1100px",
-  margin: "40px auto 0 auto",
+  maxWidth: "1200px",
+  margin: "50px auto 0 auto",
 };
 
 const publicationCard = {
   backgroundColor: "white",
   padding: "30px",
-  borderRadius: "16px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+  borderRadius: "18px",
   textAlign: "left",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+};
+
+const paperTitle = {
+  marginBottom: "15px",
+  fontWeight: "700",
+  color: "#0B3C5D",
 };
 
 const metaStyle = {
   fontSize: "14px",
-  color: "#555",
-  marginBottom: "5px",
+  color: "#666",
+  marginBottom: "8px",
 };
 
 const doiStyle = {
@@ -346,19 +509,66 @@ const doiStyle = {
 
 const abstractStyle = {
   fontSize: "14px",
-  lineHeight: "1.6",
-  marginBottom: "20px",
+  lineHeight: "1.8",
   color: "#333",
+  marginBottom: "25px",
+};
+
+const latestIssueSection = {
+  padding: "100px 20px",
+  background:
+    "linear-gradient(135deg, #0B3C5D, #164B75)",
+  textAlign: "center",
+};
+
+const issueCard = {
+  backgroundColor: "white",
+  maxWidth: "700px",
+  margin: "0 auto",
+  padding: "40px",
+  borderRadius: "20px",
+  color: "#0B3C5D",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+};
+
+const primaryBtn = {
+  padding: "14px 34px",
+  backgroundColor: "white",
+  color: "#0B3C5D",
+  border: "none",
+  borderRadius: "30px",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "15px",
+};
+
+const secondaryBtn = {
+  padding: "14px 34px",
+  backgroundColor: "transparent",
+  color: "white",
+  border: "2px solid white",
+  borderRadius: "30px",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "15px",
 };
 
 const viewBtn = {
-  padding: "8px 18px",
+  display: "inline-block",
+  padding: "10px 18px",
   backgroundColor: "#0B3C5D",
   color: "white",
-  border: "none",
-  borderRadius: "20px",
-  cursor: "pointer",
-  fontSize: "13px",
+  borderRadius: "30px",
+  textDecoration: "none",
+  fontSize: "14px",
+  fontWeight: "600",
+};
+
+const footerStyle = {
+  backgroundColor: "#0B3C5D",
+  color: "white",
+  textAlign: "center",
+  padding: "25px",
 };
 
 export default Home;
