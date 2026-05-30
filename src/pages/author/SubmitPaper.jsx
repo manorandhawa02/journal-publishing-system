@@ -10,7 +10,10 @@ function SubmitPaper() {
     title: "",
     abstract: "",
     authorName: "",
+    keywords: "",
+    journalCategory: "Computer Science",
   });
+
   const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
@@ -20,56 +23,48 @@ function SubmitPaper() {
     });
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  e.preventDefault();
+    try {
+      const data = new FormData();
 
-  try {
+      data.append("title", formData.title);
+      data.append("abstract", formData.abstract);
+      data.append("keywords", formData.keywords);
+      data.append("authorName", formData.authorName);
+      data.append("journalCategory", formData.journalCategory);
 
-    const data = new FormData();
+      data.append("file", file);
 
-    data.append("title", formData.title);
-    data.append("abstract", formData.abstract);
-    data.append("keywords", formData.keywords);
-    data.append("authorName", formData.authorName);
+      const token = localStorage.getItem("token");
 
-    data.append("file", file);
-
-    const token = localStorage.getItem("token");
-
-    const res = await API.post(
-      "/paper/submit",
-      data,
-      {
+      const res = await API.post("/paper/submit", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           // "Content-Type": "multipart/form-data",
         },
-      }
-    );
+      });
 
-    console.log(res.data);
+      console.log(res.data);
 
-    alert("Paper submitted successfully!");
+      alert("Paper submitted successfully!");
 
-    setFormData({
-      title: "",
-      abstract: "",
-      authorName: "",
-    });
+      setFormData({
+        title: "",
+        abstract: "",
+        authorName: "",
+        keywords: "",
+        journalCategory: "Computer Science",
+      });
 
-    setFile(null);
+      setFile(null);
+    } catch (err) {
+      console.log(err);
 
-  } catch (err) {
-
-    console.log(err);
-
-    alert(
-      err.response?.data?.message ||
-      "Paper upload failed"
-    );
-  }
-};
+      alert(err.response?.data?.message || "Paper upload failed");
+    }
+  };
 
   return (
     <AuthorLayout>
@@ -98,16 +93,16 @@ function SubmitPaper() {
           ></textarea>
         </div>
         <div style={inputGroup}>
-  <label>Keywords</label>
+          <label>Keywords</label>
 
-  <input
-    type="text"
-    name="keywords"
-    value={formData.keywords}
-    onChange={handleChange}
-    placeholder="AI, ML, Blockchain"
-  />
-</div>
+          <input
+            type="text"
+            name="keywords"
+            value={formData.keywords}
+            onChange={handleChange}
+            placeholder="AI, ML, Blockchain"
+          />
+        </div>
 
         <div style={inputGroup}>
           <label>Author Name</label>
@@ -120,15 +115,34 @@ function SubmitPaper() {
           />
         </div>
         <div style={inputGroup}>
-  <label>Upload PDF</label>
+          <label>Journal Category</label>
 
-  <input
-    type="file"
-    accept=".pdf"
-    onChange={(e) => setFile(e.target.files[0])}
-    required
-  />
-</div>
+          <select
+            name="journalCategory"
+            value={formData.journalCategory}
+            onChange={handleChange}
+          >
+            <option>Artificial Intelligence</option>
+            <option>Computer Science</option>
+            <option>Software Engineering</option>
+            <option>Data Science</option>
+            <option>Cyber Security</option>
+            <option>Healthcare</option>
+            <option>Blockchain</option>
+            <option>IoT</option>
+            <option>Cloud Computing</option>
+          </select>
+        </div>
+        <div style={inputGroup}>
+          <label>Upload PDF</label>
+
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={(e) => setFile(e.target.files[0])}
+            required
+          />
+        </div>
 
         <button type="submit" style={submitBtn}>
           Submit Paper
@@ -141,7 +155,7 @@ function SubmitPaper() {
 const titleStyle = {
   marginBottom: "30px",
   fontSize: "30px",
-  fontWeight: "700"
+  fontWeight: "700",
 };
 
 const formStyle = {
@@ -149,13 +163,13 @@ const formStyle = {
   padding: "40px",
   borderRadius: "14px",
   boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-  maxWidth: "600px"
+  maxWidth: "600px",
 };
 
 const inputGroup = {
   display: "flex",
   flexDirection: "column",
-  marginBottom: "20px"
+  marginBottom: "20px",
 };
 
 const submitBtn = {
@@ -164,7 +178,7 @@ const submitBtn = {
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 export default SubmitPaper;
