@@ -17,17 +17,17 @@ import Submissions from "./pages/admin/Submissions";
 import PublishedPaper from "./pages/published/PublishedPaper";
 import AssignedPapers from "./pages/reviewer/AssignedPapers";
 import PublishIssues from "./pages/admin/PublishIssues";
+import GoogleSuccess from "./pages/GoogleSuccess";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 function App() {
   return (
     <BrowserRouter>
-    <TopNavbar />
+      <TopNavbar />
       <Routes>
         {/* Home Route */}
         <Route path="/" element={<Home />} />
         {/*TopNavbar*/}
-        
 
         {/* Signup Route */}
         <Route path="/signup" element={<Signup />} />
@@ -119,6 +119,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/google-success" element={<GoogleSuccess />} />
       </Routes>
     </BrowserRouter>
   );

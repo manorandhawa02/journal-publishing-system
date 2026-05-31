@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
-import { loginUser } from "../services/authService";
+// import { loginUser } from "../services/authService";
 import { FcGoogle } from "react-icons/fc";
 
 function Login() {
@@ -9,23 +9,23 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
 
-    try {
-      const data = await loginUser(formData);
+  //   try {
+  //     const data = await loginUser(formData);
 
-      localStorage.setItem("token", data.token);
+  //     localStorage.setItem("token", data.token);
 
-      localStorage.setItem("user", JSON.stringify(data.user));
+  //     localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Login successful");
-    } catch (err) {
-      console.log(err);
+  //     alert("Login successful");
+  //   } catch (err) {
+  //     console.log(err);
 
-      alert(err.response?.data?.message || "Login failed");
-    }
-  };
+  //     alert(err.response?.data?.message || "Login failed");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,6 +147,9 @@ function Login() {
 
           <button
             type="button"
+            onClick={() => {
+              window.location.href = "http://localhost:5000/api/auth/google";
+            }}
             style={{
               width: "100%",
               padding: "10px",
@@ -157,7 +160,6 @@ function Login() {
               alignItems: "center",
               justifyContent: "center",
               gap: "10px",
-              fontWeight: "500",
             }}
           >
             <FcGoogle size={22} />
