@@ -3,21 +3,19 @@ import API from "../../services/api";
 import AdminLayout from "../../layouts/AdminLayout";
 
 function PublishIssues() {
-
-  const [papers, setPapers] = useState([]);
+  const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-    fetchPublished();
+    fetchIssues();
   }, []);
 
-  const fetchPublished = async () => {
-
+  const fetchIssues = async () => {
     try {
+      const res = await API.get("/issues");
 
-      const res = await API.get("/published");
+      console.log(res.data);
 
-      setPapers(res.data);
-
+      setIssues(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -25,79 +23,47 @@ function PublishIssues() {
 
   return (
     <AdminLayout>
+      <h2>Published Journal Issues</h2>
 
-      <h2 style={titleStyle}>
-        Published Journal Issues
-      </h2>
+      {issues.map((issue) => (
+        <div
+          key={issue._id}
+          style={{
+            background: "#fff",
+            padding: "20px",
+            marginBottom: "20px",
+            borderRadius: "10px",
+          }}
+        >
+          <h3>
+            Volume {issue.volume} - Issue {issue.issue}
+          </h3>
 
-      <div style={gridStyle}>
+          <p>Year: {issue.year}</p>
 
-        {papers.map((paper) => (
+          <h4>Papers</h4>
 
-          <div key={paper._id} style={cardStyle}>
-
-            <h3>{paper.title}</h3>
-
-            <p>
-              <b>Authors:</b>{" "}
-              {paper.authors?.join(", ")}
-            </p>
-
-            <p>
-              <b>Volume:</b> {paper.volume}
-            </p>
-
-            <p>
-              <b>Issue:</b> {paper.issue}
-            </p>
-
-            <p>
-              <b>DOI:</b> {paper.doi}
-            </p>
-
-            <a
-              href={paper.fileUrl}
-              target="_blank"
-              rel="noreferrer"
-              style={btnStyle}
+          {issue.papers?.map((paper) => (
+            <div
+              key={paper._id}
+              style={{
+                borderBottom: "1px solid #eee",
+                padding: "10px 0",
+              }}
             >
-              Open PDF
-            </a>
+              <p>
+                <b>{paper.title}</b>
+              </p>
 
-          </div>
-        ))}
-      </div>
+              <p>{paper.authors?.join(", ")}</p>
 
+              <p>{paper.doi}</p>
+            </div>
+          ))}
+        </div>
+      ))}
     </AdminLayout>
   );
 }
-
-const titleStyle = {
-  marginBottom: "25px",
-};
-
-const gridStyle = {
-  display: "grid",
-  gridTemplateColumns:
-    "repeat(auto-fit, minmax(300px,1fr))",
-  gap: "20px",
-};
-
-const cardStyle = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "10px",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.05)",
-};
-
-const btnStyle = {
-  display: "inline-block",
-  marginTop: "10px",
-  padding: "8px 14px",
-  background: "#0B3C5D",
-  color: "white",
-  borderRadius: "6px",
-  textDecoration: "none",
-};
 
 export default PublishIssues;

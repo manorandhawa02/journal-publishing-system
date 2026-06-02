@@ -3,17 +3,29 @@ import { Link, useLocation } from "react-router-dom";
 function AdminSidebar() {
   const location = useLocation();
 
-  const menuItems = [
-    { name: "Dashboard", path: "/admin" },
-    { name: "All Submissions", path: "/admin/submissions" },
-    { name: "Assign Reviewers", path: "/admin/assign" },
-    { name: "Publish Issues", path: "/admin/issues" },
-    { name: "AI vs Reviewer", path: "/admin/comparison" }
-  ];
+ const menuItems = [
+  { name: "📊 Dashboard", path: "/admin" },
+  { name: "📄 All Submissions", path: "/admin/submissions" },
+  // { name: "👨‍⚖️ Assign Reviewers", path: "/admin/assign" },
+  { name: "📚 Publish Issues", path: "/admin/issues" },
+  { name: "🔍 AI vs Reviewer", path: "/admin/comparison" },
+];
 
   return (
     <div style={sidebarStyle}>
-      <h4 style={logoStyle}>Admin Panel</h4>
+      <h4 style={logoStyle}>
+  Scientific Journal
+</h4>
+
+<p
+  style={{
+    fontSize: "13px",
+    opacity: 0.7,
+    marginBottom: "30px",
+  }}
+>
+  Editorial Management System
+</p>
       <Link
   to="/admin/published"
   style={linkStyle}
